@@ -2,143 +2,138 @@
   #include <stdio.h>
   #include <string.h>
   #include <stdbool.h>
+  #include <ctype.h>  
+  #include "syntax.tab.h"
   
   int nb_ligne=1;
-  int col;
+  int col=1;
   
   bool integer_validation(int number){
-   if(number<=-32768 && number>=32768){
-      return true;}
-   return false;
-  }
-
-  bool idf_validation(char idf[], int length) {
-    if (length > 14) return false;  // Vérifier la longueur
-    if (idf[length - 1] == '_' || idf[0] == '_') return false;  // Vérifier le début et la fin
-    
-    int i;
-    // Vérifier "__" sans accès hors limites
-    for ( i = 0; i < length - 1; i++) {  
-        if (idf[i] == '_' && idf[i + 1] == '_') return false;
+    if(number < -32768 || number > 32767){
+      return false;
     }
     return true;
   }
   
+  bool idf_validation(char idf[], int length) {
+    if (length > 14) return false;  // Vérifier la longueur
+    if (idf[length - 1] == '_' || !isalpha(idf[0])) return false;  // Vérifier le début et la fin
+    
+    int i;
+    // Verifier "__" sans acces hors limites
+    for (i = 0; i < length - 1; i++) {
+      if (idf[i] == '_' && idf[i + 1] == '_') return false;
+    }
+    return true;
+  }
 %}
 
-/* Entite */
-
+/* Entites */
 lettre [a-zA-Z]
 chiffre [0-9]
 
-/* IDF */
-IDF ({lettre}|{chiffre}|_)+
-/*done*/
-
 /* CST */
 CST_INT \([+-]{chiffre}+\)|{chiffre}+
-/*done*/
-
 CST_FLOAT \([+-]{chiffre}+\.{chiffre}+\)|{chiffre}+\.{chiffre}+
-/* done */
+
+/* IDF */
+IDF {lettre}({lettre}|{chiffre}|_)*
 
 /* COMMENTS */
-
-COMMENT_LINE <!-[^\n]*-!>
-/*done*/
-
-COMMENTS_BLOCS "{-"[^\n]*(.|\n)*"-}"
-/*done*/
-
-
-
+COMMENT_LINE "< !-"[^\n]*"-!>"
+COMMENTS_BLOCS "{--"([^-]|"-"[^-])*"--}"
 
 %%
-"Main Program" { col+=yyleng;printf("Main Program \n");}
-"Var" {col+=yyleng; printf("debut de bloc de declaration \n");}
-"BeginPg" {col+=yyleng; printf("debut de bloc de code \n");}
-"EndPg;" {col+=yyleng; printf("fin du code \n");}
+"MainPrgm" { col+=yyleng; return MAINPRGM; }
+"Var" { col+=yyleng; return VAR; }
+"BeginPg" { col+=yyleng; return BEGINPG; }
+"EndPg" { col+=yyleng; return ENDPG; }
 
-{COMMENTS_BLOCS} {col+=yyleng; printf("block de commentaire %s \n",yytext);}
-{COMMENT_LINE} {col+=yyleng;printf("commentaire dans la ligne %d : %s \n",nb_ligne,yytext);}
+{COMMENTS_BLOCS} { col+=yyleng; /* Ignorer les commentaires */ }
+{COMMENT_LINE} { col+=yyleng; /* Ignorer les commentaires */ }
 
+"let" { col+=yyleng; return LET; }
+"@define" { col+=yyleng; return DEFINE; }
+"Const" { col+=yyleng; return CONST; }
+"Int" { col+=yyleng; return INT; }
+"Float" { col+=yyleng; return FLOAT; }
 
-"let" {col+=yyleng; printf("let \n");}
-"@define" {col+=yyleng; printf("@define \n");}
-"Const" {col+=yyleng; printf("Const \n");}
-"Int" {col+=yyleng; printf("Int \n");}
-"Float" {col+=yyleng; printf("Float \n");}
+"if" { col+=yyleng; return IF; }
+"then" { col+=yyleng; return THEN; }
+"else" { col+=yyleng; return ELSE; }
 
-"if" {col+=yyleng; printf("if \n");}
-"then" {col+=yyleng; printf("then \n");}
-"else" {col+=yyleng; printf("else \n");}
+"do" { col+=yyleng; return DO; }
+"while" { col+=yyleng; return WHILE; }
 
-"do" {col+=yyleng; printf("do \n");}
-"while" {col+=yyleng; printf("while \n");}
+"for" { col+=yyleng; return FOR; }
+"from" { col+=yyleng; return FROM; }
+"to" { col+=yyleng; return TO; }
+"step" { col+=yyleng; return STEP; }
 
-"for" {col+=yyleng; printf("for \n");}
-"from" {col+=yyleng; printf("from \n");}
-"to" {col+=yyleng; printf("to \n");}
-"step" {col+=yyleng; printf("step \n");}
+"input" { col+=yyleng; return INPUT; }
+"output" { col+=yyleng; return OUTPUT; }
 
-"input" {col+=yyleng; printf("input \n");}
-"output" {col+=yyleng; printf("output \n");}
+"+" { col+=yyleng; return '+'; }
+"-" { col+=yyleng; return '-'; }
+"*" { col+=yyleng; return '*'; }
+"/" { col+=yyleng; return '/'; }
+";" { col+=yyleng; return ';'; }
+"=" { col+=yyleng; return '='; }
+"," { col+=yyleng; return ','; }
+":" { col+=yyleng; return ':'; }
+":=" { col+=yyleng; return ASSIGN; }
+"AND" { col+=yyleng; return AND; }
+"OR" { col+=yyleng; return OR; }
 
-; {col+=yyleng; printf(" ; \n"); }
-= { col+=yyleng; printf("  = \n");}
-, { col+=yyleng; printf("  , \n");}
-: { col+=yyleng; printf(": \n");}
-":=" { col+=yyleng; printf(":= \n");}
-"AND" { col+=yyleng; printf(" AND \n");}
-"OR" { col+=yyleng; printf("OR \n");}
+"(" { col+=yyleng; return '('; }
+")" { col+=yyleng; return ')'; }
+"{" { col+=yyleng; return '{'; }
+"}" { col+=yyleng; return '}'; }
+"[" { col+=yyleng; return '['; }
+"]" { col+=yyleng; return ']'; }
+"!" { col+=yyleng; return '!'; }
 
-"(" { col+=yyleng; printf(" ( \n");}
-")" { col+=yyleng; printf(" ) \n");}
+">" { col+=yyleng; return GT; }
+"<" { col+=yyleng; return LT; }
+">=" { col+=yyleng; return GE; }
+"<=" { col+=yyleng; return LE; }
+"==" { col+=yyleng; return EQ; }
+"!=" { col+=yyleng; return NE; }
 
-"{" { col+=yyleng; printf(" { \n");}
-"}" { col+=yyleng; printf(" } \n");}
-
-"[" { col+=yyleng; printf(" [ \n");}
-] { col+=yyleng; printf("  ] \n");}
-
-! { col+=yyleng; printf("  ! \n");}
-
-">" { col+=yyleng; printf("  > \n");}
-"<" { col+=yyleng; printf("  < \n");}
-">=" { col+=yyleng; printf("  > \n");}
-"<=" { col+=yyleng; printf("  < \n");}
-"==" { col+=yyleng; printf("  == \n");}
-"!=" { col+=yyleng; printf("  != \n");}
-
-{IDF}  {
-    
-    if (idf_validation(yytext, yyleng)) {
-        col += yyleng;
-        printf("IDF FOUND %s \n", yytext);
-    } else {
-        printf("\nErreur lexicale sur l'entité %s a la ligne %d et la colonne %d\n", yytext, nb_ligne, col);
-    }
+{IDF} {
+  if (idf_validation(yytext, yyleng)) {
+    col += yyleng;
+    yylval.str = strdup(yytext);
+    return IDF;
+  } else {
+    printf("\nErreur lexicale sur l'entité %s à la ligne %d et la colonne %d\n", yytext, nb_ligne, col);
+  }
 }
 
-{CST_INT}  { 
-   if(integer_validation(atoi(yytext)) && yyleng<= 14){
-    col+=yyleng;printf("CST_INT FOUND %s \n",yytext);
-   }
-   else{
-    printf("\n IDF hors de la plage\n");
-   }}
+{CST_INT} {
+  int value = atoi(yytext);
+  if (integer_validation(value)) {
+    col+=yyleng;
+    yylval.entier = value;
+    return CST_INT;
+  } else {
+    printf("\nErreur lexicale: Entier hors plage [-32768, 32767] à la ligne %d et la colonne %d\n", nb_ligne, col);
+  }
+}
 
-{CST_FLOAT}  {
-   col+=yyleng;printf("CST_FLOAT FOUND %s \n",yytext);
-   }
+{CST_FLOAT} {
+  col+=yyleng;
+  yylval.reel = atof(yytext);
+  return CST_FLOAT;
+}
 
-[ \t] 
-\n   {nb_ligne++; col=1;}
-. {printf("\n erreur lexicale sur l'entite %s a la ligne %d et la colonne %d\n", yytext,nb_ligne,col); return 0;}
+[ \t] { col+=yyleng; } /* Ignorer les espaces et tabulations */
+\n { nb_ligne++; col=1; } /* Nouvelle ligne */
+
+. {
+  printf("\nErreur lexicale sur l'entité %s à la ligne %d et la colonne %d\n", yytext, nb_ligne, col);
+  col++;
+}
+
 %%
-int main() 
-{
-  yylex();
-  return 0;
-}
-
+int yywrap() {return 1;}
