@@ -23,6 +23,7 @@
 %token MAINPRGM VAR BEGINPG ENDPG
 %token LET DEFINE CONST INT FLOAT
 %token <str> IDF
+%type <str> var_list type
 %token <entier> CST_INT
 %token <reel> CST_FLOAT
 %token IF THEN ELSE DO WHILE FOR FROM TO STEP
@@ -74,9 +75,26 @@ declaration : var_decl
 
 /* Declaration des variables */
 var_decl : LET var_list ':' type ';'
-         { printf("Declaration de variables\n"); }
+         { printf("Declaration de variables %s de type %s\n",$2,$4);
+
+                
+                  char *token = strtok($2, ", ");
+                  while (token != NULL) {
+                    update(token, $4, "false","null");
+                    token = strtok(NULL, ", ");
+                                         }
+           
+         }
          | LET var_list ':' '[' type ';' CST_INT ']' ';'
-         { printf("Declaration de tableau\n"); }
+         { printf("Declaration de tableau %s de type %s\n",$2,$5);
+
+         char *token = strtok($2, ", ");
+                  while (token != NULL) {
+                    update(token, $5, "false","null");
+                    token = strtok(NULL, ", ");
+                                        }
+          
+         }
          /* Gestion des erreurs */
          | LET var_list ':' '[' type error ';'
          { 
@@ -96,20 +114,37 @@ var_decl : LET var_list ':' type ';'
          ;
 
 /* Liste des variables */
-var_list : IDF ',' var_list
-         | IDF
-         | error
-         {
-             yyerror("Erreur dans la liste des variables");
-             yyerrok;
-         }
-         ;
+var_list : IDF ',' var_list {
+    char* buffer = malloc(strlen($1) + strlen($3) + 3);
+    sprintf(buffer, "%s, %s", $1, $3);
+    $$ = buffer;
+}
+| IDF {
+    $$ = strdup($1);  // Copie du nom
+}
+| error {
+    yyerror("Erreur dans la liste des variables");
+    yyerrok;
+    $$ = strdup("???");
+};
+
 
 /* Declaration de constantes */
 const_decl : DEFINE CONST IDF ':' type '=' CST_INT ';'
-           { printf("Declaration de constante entiere\n"); }
+           { 
+            printf("Declaration de constante entiere: %s = %d\n", $3,$7);
+            char value_str[12];
+            snprintf(value_str, sizeof(value_str), "%d", $7);
+            update($3, "Int", "true", value_str);
+            }
            | DEFINE CONST IDF ':' type '=' CST_FLOAT ';'
-           { printf("Declaration de constante reelle\n"); }
+           { printf("Declaration de constante reelle %s = %f\n ",$3,$7);
+           
+                char value_str[32]; 
+                snprintf(value_str, sizeof(value_str), "%.2f", $7); 
+                update($3, "Float", "true", value_str);
+              
+            }
            | DEFINE CONST IDF ':' type '=' error
            { 
                yyerror("Erreur: Valeur de constante invalide ou point-virgule manquant");
@@ -123,14 +158,18 @@ const_decl : DEFINE CONST IDF ':' type '=' CST_INT ';'
            ;
 
 /* Types */
-type : INT
-     | FLOAT
-     | error
-     {
-         yyerror("Type non reconnu");
-         yyerrok;
-     }
-     ;
+type : INT {
+    $$ = strdup("Int");
+}
+| FLOAT {
+    $$ = strdup("Float");
+}
+| error {
+    yyerror("Type non reconnu");
+    yyerrok;
+    $$ = strdup("Unknown");
+};
+
 
 /* Instructions */
 instructions : instruction instructions
@@ -279,6 +318,7 @@ int yyerror(const char *s) {
 
 int main() {
     printf("Analyse syntaxique...\n");
-    yyparse();
+    yyparse();  
+    afficher();
     return 0;
 }
