@@ -1642,7 +1642,7 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 110 "syntax.y"
-    { printf("Declaration de constante entière\n"); ;}
+    { printf("Declaration de constante entiere\n"); ;}
     break;
 
   case 19:
@@ -1711,7 +1711,7 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 159 "syntax.y"
     { 
-                yyerror("Erreur: Point-virgule manquant après l'affectation");
+                yyerror("Erreur: Point-virgule manquant apres l'affectation");
                 yyerrok;
             ;}
     break;
@@ -1721,7 +1721,7 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 164 "syntax.y"
     {
-                yyerror("Erreur: Point-virgule manquant après l'affectation de tableau");
+                yyerror("Erreur: Point-virgule manquant apres l'affectation de tableau");
                 yyerrok;
             ;}
     break;
@@ -1782,7 +1782,7 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 194 "syntax.y"
     {
-              yyerror("Erreur: Parenthèses manquantes autour de la condition while");
+              yyerror("Erreur: Parentheses manquantes autour de la condition while");
               yyerrok;
           ;}
     break;
@@ -2098,7 +2098,7 @@ yyreturn:
 
 /* Fonction d'affichage des erreurs */
 int yyerror(const char *s) {
-    printf("Erreur Syntaxique à la ligne %d, colonne %d: %s\n", nb_ligne, col, s);
+    printf("Erreur Syntaxique a la ligne %d, colonne %d: %s\n", nb_ligne, col, s);
     nb_erreurs++;
     return 0;
 }

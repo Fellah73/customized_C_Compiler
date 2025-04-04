@@ -272,7 +272,7 @@ expression : expression '+' expression
 
 /* Fonction d'affichage des erreurs */
 int yyerror(const char *s) {
-    printf("Erreur Syntaxique à la ligne %d, colonne %d: %s\n", nb_ligne, col, s);
+    printf("Erreur Syntaxique a la ligne %d, colonne %d: %s\n", nb_ligne, col, s);
     nb_erreurs++;
     return 0;
 }
