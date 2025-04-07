@@ -81,7 +81,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 16 "syntax.y"
+#line 17 "syntax.y"
 
     int entier;
     float reel;
@@ -89,8 +89,9 @@ typedef union YYSTYPE
 
 
 
+
 /* Line 1676 of yacc.c  */
-#line 94 "syntax.tab.h"
+#line 95 "syntax.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

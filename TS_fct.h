@@ -70,6 +70,12 @@ int update(char entite[], char type[], char isConst[], char value[], int length)
         return -1;
     }
 
+    // si la vlauer est signée
+    if (value[0] == '(')
+    {
+        printf("la valeur ne doit pas etre signe\n");
+    }
+
     // si l'entite existe deja
     if (index != -1)
     {

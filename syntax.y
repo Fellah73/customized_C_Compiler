@@ -2,6 +2,7 @@
     #include <stdio.h>
     #include <stdlib.h>
     #include <string.h>
+    #include "TS_fct.h"
     
     extern int nb_ligne;
     extern int col;
@@ -17,6 +18,7 @@
     int entier;
     float reel;
     char* str;
+
 }
 
 /* Declaration des tokens */
@@ -31,6 +33,8 @@
 %token ASSIGN AND OR
 %token GT LT GE LE EQ NE
 
+
+
 /* Priorites des operateurs */
 %left OR
 %left AND
@@ -44,11 +48,12 @@
 
 /* Definition de la structure globale du programme */
 programme : MAINPRGM IDF ';' VAR declarations BEGINPG '{' instructions '}' ENDPG ';'
-          {
+          {  
+              inserer($2,"motCle","null", "false");
               if (nb_erreurs == 0) {
-                  printf("Programme valide !\n");
+                  printf("\nProgramme valide !\n");
               } else {
-                  printf("Programme invalide. %d erreur(s) detectee(s).\n", nb_erreurs);
+                  printf("\nProgramme invalide. %d erreur(s) detectee(s).\n", nb_erreurs);
               }
           }
           | error 
@@ -106,7 +111,7 @@ var_decl : LET var_list ':' type ';'
                       }
                       else{
                        if($7 <= 0){
-                         sprintf(buffer, sizeof(buffer), "Erreur: La taille du tableau %s doit etre positive\n", token);
+                         snprintf(buffer, sizeof(buffer), "Erreur: La taille du tableau %s doit etre positive\n", token);
                          yyerror(buffer);
                          yyerrok;
                         }else{
@@ -252,29 +257,79 @@ instruction : affectation
 affectation : IDF ASSIGN expression ';'
             { 
                 char buffer[100];
-                int i = isConst($1);
-                if(i == 1) {
-                    snprintf(buffer,sizeof(buffer),"Erreur: La constante %s ne peut pas etre modifiee\n", $1);
+                int i = recherche($1);
+
+                // undeclared variable
+                if(i == -1) {
+                    snprintf(buffer,sizeof(buffer),"Erreur: La variable %s n'est pas declaree\n", $1);
                     yyerrorSemantique(buffer);
                     yyerrok;
-                } else {
-                    printf("Affectation pour entite %s \n",$1);
-                }
+
+                    // appedend a value to a const
+                } else  {
+                    int isConstante = isConst($1);  
+                    if(isConstante == 1) {
+                        snprintf(buffer,sizeof(buffer),"Erreur: La constante %s ne peut pas etre modifiee\n", $1);
+                        yyerrorSemantique(buffer);
+                        yyerrok;
+
+                        // no problem
+                    } else {
+                        printf("Affectation pour entite %s \n",$1);
+                    }
+                } 
                 
              }
-            | IDF '[' expression ']' ASSIGN expression ';'
-            { printf("Affectation dans un tableau\n"); }
+            |IDF '=' expression ';' {
+                  char buffer[100];
+                  snprintf(buffer,sizeof(buffer),"Erreur: L'operateur '=' est une affectation, pas une comparaison\n");
+                  yyerror(buffer);
+                  yyerrok;
+            } 
+            | IDF '[' CST_INT ']' ASSIGN expression ';'
+            { 
+               char buffer[100];
+               int i = recherche($1);
+               int erreur = 0;
+
+               if (i == -1) {
+                   snprintf(buffer, sizeof(buffer), "Erreur: La variable %s n'est pas declaree\n", $1);
+                   yyerrorSemantique(buffer);
+                   erreur = 1;
+               } else if (ts[i].Length == 1) {
+                   snprintf(buffer, sizeof(buffer), "Erreur: La variable %s n'est pas un tableau\n", $1);
+                   yyerrorSemantique(buffer);
+                   erreur = 1;
+               } else {
+                   int index = $3;
+                   if (index < 0 || index >= ts[i].Length) {
+                       snprintf(buffer, sizeof(buffer), "Erreur: L'indice %d est hors limites pour le tableau %s\n", index, $1);
+                       yyerrorSemantique(buffer);
+                       erreur = 1;
+                   }
+               }
+
+               if (!erreur) {
+                   printf("Affectation pour tableau %s[%d] \n", $1, $3);
+               }
+            }
+            | IDF '[' CST_INT ']' '=' expression ';' {
+                char buffer[100];
+                snprintf(buffer,sizeof(buffer),"Erreur: L'operateur '=' est une affectation, pas une comparaison\n");
+                yyerror(buffer);
+                yyerrok;
+            }
             | IDF ASSIGN expression error
             { 
                 yyerror("Erreur: Point-virgule manquant apres l'affectation");
                 yyerrok;
             }
-            | IDF '[' expression ']' ASSIGN expression error
+            | IDF '[' CST_INT ']' ASSIGN expression error
             {
                 yyerror("Erreur: Point-virgule manquant apres l'affectation de tableau");
                 yyerrok;
             }
-            | error ASSIGN expression ';'
+            | error ASSIGN CST_INT ';'
             {
                 yyerror("Erreur: Identificateur invalide dans l'affectation");
                 yyerrok;
@@ -290,9 +345,14 @@ condition : IF '(' expression ')' THEN '{' instructions '}'
               yyerror("Erreur dans la condition du if");
               yyerrok;
           }
-          | IF error
+          | IF error 
           {
-              yyerror("Erreur: Syntaxe incorrecte pour la condition if");
+              yyerror("Erreur: Syntaxe incorrecte pour la condition if -if error");
+              yyerrok;
+          }
+          | error 
+          {
+              yyerror("Erreur: Syntaxe incorrecte pour la condition if -error");
               yyerrok;
           }
           ;
@@ -312,7 +372,22 @@ boucle_do : DO '{' instructions '}' WHILE '(' expression ')' ';'
           ;
 
 boucle_for : FOR IDF FROM expression TO expression STEP expression '{' instructions '}'
-           { printf("Boucle for\n"); }
+           { 
+                char buffer[100];
+                int i = recherche($2);
+
+                // undeclared variable
+                if(i == -1) {
+                    snprintf(buffer,sizeof(buffer),"Erreur: La variable %s n'est pas declaree\n", $2);
+                    yyerrorSemantique(buffer);
+                    yyerrok;
+
+                    // no problem
+                } else  {
+                        printf("boucle for bien forme \n");
+                } 
+
+            }
            | FOR error
            {
                yyerror("Erreur: Syntaxe incorrecte pour la boucle for");
@@ -321,7 +396,22 @@ boucle_for : FOR IDF FROM expression TO expression STEP expression '{' instructi
            ;
 
 lecture : INPUT '(' IDF ')' ';'
-        { printf("Instruction input\n"); }
+        { 
+                char buffer[100];
+                int i = recherche($3);
+
+                // undeclared variable
+                if(i == -1) {
+                    snprintf(buffer,sizeof(buffer),"Erreur: entite %s n'est pas declaree\n", $3);
+                    yyerrorSemantique(buffer);
+                    yyerrok;
+
+                    // appedend a value to a const
+                } else  {
+                    printf("Instruction input pour entite %s \n",$3);
+                } 
+
+         }
         | INPUT '(' error ')' ';'
         {
             yyerror("Erreur: Identificateur invalide dans l'instruction input");
@@ -335,7 +425,9 @@ lecture : INPUT '(' IDF ')' ';'
         ;
 
 ecriture : OUTPUT '(' expression_liste ')' ';'
-         { printf("Instruction output\n"); }
+         { 
+                printf("Instruction output appele \n");
+         } 
          | OUTPUT error
          {
              yyerror("Erreur: Syntaxe incorrecte pour l'instruction output");
@@ -365,15 +457,62 @@ expression : expression '+' expression
            | expression GE expression
            | expression LE expression
            | expression EQ expression
+           | expression '=' expression {
+              char buffer[100];
+              snprintf(buffer,sizeof(buffer),"Erreur: L'operateur '=' est une affectation, pas une comparaison\n");
+              yyerror(buffer);
+                yyerrok;
+           }
            | expression NE expression
-           | IDF
-           | IDF '[' expression ']'
+           | IDF  {
+                char buffer[100];
+                int i = recherche($1);
+    
+                // undeclared variable
+                if(i == -1) {
+                     snprintf(buffer,sizeof(buffer),"Erreur: La variable %s n'est pas declaree\n", $1);
+                     yyerrorSemantique(buffer);
+                     yyerrok;
+    
+                     // appedend a value to a const
+                } else  {
+                     printf("Expression pour entite %s \n",$1);
+                }
+           }
+           | IDF '[' CST_INT ']'
+              {
+                char buffer[100];
+                 int i = recherche($1);
+                 int erreur = 0;
+
+               if (i == -1) {
+                   snprintf(buffer, sizeof(buffer), "Erreur: La variable %s n'est pas declaree\n", $1);
+                   yyerrorSemantique(buffer);
+                   erreur = 1;
+               } else if (ts[i].Length == 1) {
+                   snprintf(buffer, sizeof(buffer), "Erreur: La variable %s n'est pas un tableau\n", $1);
+                   yyerrorSemantique(buffer);
+                   erreur = 1;
+               } else {
+                   int index = $3;
+                   if (index < 0 || index >= ts[i].Length) {
+                       snprintf(buffer, sizeof(buffer), "Erreur: L'indice %d est hors limites pour le tableau %s\n", index, $1);
+                       yyerrorSemantique(buffer);
+                       erreur = 1;
+                   }
+               }
+
+               if (!erreur) {
+                   printf("Affectation pour tableau %s[%d] \n", $1, $3);
+               }
+              }
            | CST_INT
            | CST_FLOAT
-           | error
+           | error 
            {
-               yyerror("Erreur dans l'expression");
-               yyerrok;
+              yyerror("Erreur dans l'expression");
+              yyerrok;
+         
            }
            ;
 

@@ -1,13 +1,18 @@
-MainPrgm MyProgram ;
+MainPrgm MyProgram2;
 Var
     let x : Int ;
     let y : Float ;
-    let arrayA,arrayA : [Int;4] ; 
+    let arrayA : [Int;4] ; 
     @define Const a : Int = 100 ;
     @define Const b : Float = 100.05 ;
     @define Const c : Float = 106.05 ;
 BeginPg
     { 
-       b := b + 2 ;
+
+     x=5;
+
+     arrayA[6]=1;
+              
+     
     }
 EndPg ;

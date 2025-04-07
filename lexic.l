@@ -4,7 +4,7 @@
   #include <stdbool.h>
   #include <ctype.h>  
   #include "syntax.tab.h"
-  #include "TS_fct.h"
+  
   
   int nb_ligne=1;
   int col=1;
