@@ -75,55 +75,86 @@ declaration : var_decl
 
 /* Declaration des variables */
 var_decl : LET var_list ':' type ';'
-         { printf("Declaration de variables %s de type %s\n",$2,$4);
-
-                
-                  char *token = strtok($2, ", ");
+         {
+                  int i = 0;
+                  char *token = strtok($2, ",");
+                  char buffer[100];
                   while (token != NULL) {
-                    update(token, $4, "false","null");
-                    token = strtok(NULL, ", ");
-                                         }
-           
+                    int inserted = inserer(token,"Idf","null", "false");
+                    if(inserted == -1){
+                        snprintf(buffer, sizeof(buffer), "Erreur: La variable %s n'est pas declaree\n", token);
+                        yyerror(buffer);
+                        yyerrok;
+                    }
+                    else{
+                          i= update(token, $4, "false","null",1);
+                          printf("Declaration de variables %s de type %s\n",$2,$4);
+                    }
+                       token = strtok(NULL, ",");
+                    } 
          }
          | LET var_list ':' '[' type ';' CST_INT ']' ';'
-         { printf("Declaration de tableau %s de type %s\n",$2,$5);
-
-         char *token = strtok($2, ", ");
-                  while (token != NULL) {
-                    update(token, $5, "false","null");
-                    token = strtok(NULL, ", ");
-                                        }
-          
-         }
+         {         char buffer[100];
+                   char *token = strtok($2,",");
+                   while (token != NULL) {
+                      int inserted = inserer(token,"Idf","null","false");
+                      if(inserted == -1){
+                           
+                          snprintf(buffer, sizeof(buffer), "Erreur: double delaration de l'entite %s\n", token);
+                          yyerrorSemantique(buffer);
+                          yyerrok;
+                      }
+                      else{
+                       if($7 <= 0){
+                         sprintf(buffer, sizeof(buffer), "Erreur: La taille du tableau %s doit etre positive\n", token);
+                         yyerror(buffer);
+                         yyerrok;
+                        }else{
+                            int i= update(token, $5, "false","null",$7);   
+                              switch (i) {
+                         case -1: 
+                             snprintf(buffer, sizeof(buffer), "Erreur: Le tableau %s n'est pas declare\n", token);
+                             yyerror(buffer);
+                             yyerrok;
+                             break;
+                         default:
+                             printf("Declaration de tableau %s de type %s [%d]\n", $2, $5, $7);
+                             break;
+                                          } 
+                              }}
+                     token = strtok(NULL, ",");
+                    } 
+            }  
          /* Gestion des erreurs */
          | LET var_list ':' '[' type error ';'
          { 
-             yyerror("Erreur: Mauvaise declaration du tableau. Syntaxe attendue: [type;taille]");
+             yyerror("Erreur: Mauvaise declaration du tableau. Syntaxe attendue: [type;taille] \n");
              yyerrok;
          }
          | LET var_list ':' error ';'
          { 
-             yyerror("Erreur: Type invalide dans la declaration de variable");
+             yyerror("Erreur: Type invalide dans la declaration de variable \n");
              yyerrok;
          }
          | LET error
          {
-             yyerror("Erreur dans la declaration de variable");
+             yyerror("Erreur dans la declaration de variable\n");
              yyerrok;
          }
          ;
 
 /* Liste des variables */
 var_list : IDF ',' var_list {
-    char* buffer = malloc(strlen($1) + strlen($3) + 3);
-    sprintf(buffer, "%s, %s", $1, $3);
+    char* buffer = malloc(strlen($1) + strlen($3) + 2);
+    sprintf(buffer, "%s,%s", $1, $3);
     $$ = buffer;
+
 }
 | IDF {
     $$ = strdup($1);  // Copie du nom
 }
 | error {
-    yyerror("Erreur dans la liste des variables");
+    yyerror("Erreur dans la liste des variables\n");
     yyerrok;
     $$ = strdup("???");
 };
@@ -132,17 +163,45 @@ var_list : IDF ',' var_list {
 /* Declaration de constantes */
 const_decl : DEFINE CONST IDF ':' type '=' CST_INT ';'
            { 
-            printf("Declaration de constante entiere: %s = %d\n", $3,$7);
-            char value_str[12];
-            snprintf(value_str, sizeof(value_str), "%d", $7);
-            update($3, "Int", "true", value_str);
+              char value_str[12],buffer[100];
+              int inserted= inserer($3,"Idf","null", "false");
+              if(inserted == -1){
+                  yyerrorSemantique(buffer,"Erreur: double delaration de l'entite %s\n", $3);
+                  yyerror(buffer);
+                  yyerrok;
+                  return;
+              }
+             
+                snprintf(value_str, sizeof(value_str), "%d", $7);
+                 int i= update($3,"Int","true",value_str,1);
+                if(i == -1){
+                    sprintf(buffer, "Erreur dans la declaration de constante %s \n", $3);
+                    yyerror(buffer);
+                    yyerrok;
+                }else{
+                    printf("Declaration de constante entiere %s = %d\n ",$3,$7);
+                  }
             }
            | DEFINE CONST IDF ':' type '=' CST_FLOAT ';'
-           { printf("Declaration de constante reelle %s = %f\n ",$3,$7);
-           
-                char value_str[32]; 
-                snprintf(value_str, sizeof(value_str), "%.2f", $7); 
-                update($3, "Float", "true", value_str);
+           { 
+
+              char value_str[12],buffer[100];
+              int inserted= inserer($3,"Idf","null", "false");
+                if(inserted == -1){
+                    yyerrorSemantique("Erreur: double delaration de l'entite %s\n", $3);
+                    yyerror("entite a une erreur \n");
+                    yyerrok;
+                    return;
+                }
+                snprintf(value_str, sizeof(value_str), "%f", $7);
+                 int i= update($3,"Float","true",value_str,1);
+                if(i == -1){
+                    sprintf(buffer,"Erreur dans la declaration de constante %s \n", $3);
+                    yyerror(buffer);
+                    yyerrok;
+                }else{
+                    printf("Declaration de constante flottante %s = %f\n ",$3,$7);
+                }
               
             }
            | DEFINE CONST IDF ':' type '=' error
@@ -191,7 +250,18 @@ instruction : affectation
             ;
 
 affectation : IDF ASSIGN expression ';'
-            { printf("Affectation simple\n"); }
+            { 
+                char buffer[100];
+                int i = isConst($1);
+                if(i == 1) {
+                    snprintf(buffer,sizeof(buffer),"Erreur: La constante %s ne peut pas etre modifiee\n", $1);
+                    yyerrorSemantique(buffer);
+                    yyerrok;
+                } else {
+                    printf("Affectation pour entite %s \n",$1);
+                }
+                
+             }
             | IDF '[' expression ']' ASSIGN expression ';'
             { printf("Affectation dans un tableau\n"); }
             | IDF ASSIGN expression error
@@ -311,7 +381,13 @@ expression : expression '+' expression
 
 /* Fonction d'affichage des erreurs */
 int yyerror(const char *s) {
-    printf("Erreur Syntaxique a la ligne %d, colonne %d: %s\n", nb_ligne, col, s);
+    printf("\nErreur Syntaxique a la ligne %d, colonne %d: %s", nb_ligne, col, s);
+    nb_erreurs++;
+    return 0;
+}
+
+int yyerrorSemantique(const char *s) {
+    printf("\nErreur semantique a la ligne %d, colonne %d: %s", nb_ligne, col, s);
     nb_erreurs++;
     return 0;
 }

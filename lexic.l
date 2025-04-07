@@ -45,67 +45,66 @@ COMMENT_LINE "< !-"[^\n]*"-!>"
 COMMENTS_BLOCS "{--"([^-]|"-"[^-])*"--}"
 
 %%
-"MainPrgm" { col+=yyleng;  inserer(yytext,"motCle","null", false); return MAINPRGM; }
-"Var" { col+=yyleng; inserer(yytext,"motCle","null", false); return VAR; }
-"BeginPg" { col+=yyleng; inserer(yytext,"motCle","null", false); return BEGINPG; }
-"EndPg" { col+=yyleng; inserer(yytext,"motCle","null", false); return ENDPG; }
+"MainPrgm" { col+=yyleng;  inserer(yytext,"motCle","null", "false"); return MAINPRGM; }
+"Var" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return VAR; }
+"BeginPg" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return BEGINPG; }
+"EndPg" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return ENDPG; }
 
 {COMMENTS_BLOCS} { col+=yyleng; /* Ignorer les commentaires */ }
 {COMMENT_LINE} { col+=yyleng; /* Ignorer les commentaires */ }
 
-"let" { col+=yyleng; inserer(yytext,"motCle","null", false); return LET; }
-"@define" { col+=yyleng; inserer(yytext,"motCle","null", false); return DEFINE; }
-"Const" { col+=yyleng; inserer(yytext,"motCle","null", false); return CONST; }
-"Int" { col+=yyleng; inserer(yytext,"motCle","null", false); return INT; }
-"Float" { col+=yyleng; inserer(yytext,"motCle","null", false); return FLOAT; }
+"let" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return LET; }
+"@define" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return DEFINE; }
+"Const" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return CONST; }
+"Int" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return INT; }
+"Float" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return FLOAT; }
 
-"if" { col+=yyleng; inserer(yytext,"motCle","null", false); return IF; }
-"then" { col+=yyleng; inserer(yytext,"motCle","null", false); return THEN; }
-"else" { col+=yyleng; inserer(yytext,"motCle","null", false); return ELSE; }
+"if" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return IF; }
+"then" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return THEN; }
+"else" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return ELSE; }
 
-"do" { col+=yyleng; inserer(yytext,"motCle","null", false); return DO; }
-"while" { col+=yyleng; inserer(yytext,"motCle","null", false); return WHILE; }
+"do" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return DO; }
+"while" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return WHILE; }
 
-"for" { col+=yyleng; inserer(yytext,"motCle","null", false); return FOR; }
-"from" { col+=yyleng; inserer(yytext,"motCle","null", false); return FROM; }
-"to" { col+=yyleng; inserer(yytext,"motCle","null", false); return TO; }
-"step" { col+=yyleng; inserer(yytext,"motCle","null", false); return STEP; }
+"for" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return FOR; }
+"from" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return FROM; }
+"to" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return TO; }
+"step" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return STEP; }
 
-"input" { col+=yyleng; inserer(yytext,"motCle","null", false); return INPUT; }
-"output" { col+=yyleng; inserer(yytext,"motCle","null", false); return OUTPUT; }
+"input" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return INPUT; }
+"output" { col+=yyleng; inserer(yytext,"motCle","null", "false"); return OUTPUT; }
 
-"+" { col+=yyleng; inserer(yytext, "separateur", "null", false); return '+'; }
-"-" { col+=yyleng; inserer(yytext, "separateur", "null", false); return '-'; }
-"*" { col+=yyleng; inserer(yytext, "separateur", "null", false); return '*'; }
-"/" { col+=yyleng; inserer(yytext, "separateur", "null", false); return '/'; }
-";" { col+=yyleng; inserer(yytext, "separateur", "null", false); return ';'; }
-"=" { col+=yyleng; inserer(yytext, "separateur", "null", false); return '='; }
-"," { col+=yyleng; inserer(yytext, "separateur", "null", false); return ','; }
-":" { col+=yyleng; inserer(yytext, "separateur", "null", false); return ':'; }
-":=" { col+=yyleng; inserer(yytext, "separateur", "null", false); return ASSIGN; }
-"AND" { col+=yyleng; inserer(yytext, "separateur", "null", false); return AND; }
-"OR" { col+=yyleng; inserer(yytext, "separateur", "null", false); return OR; }
+"+" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '+'; }
+"-" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '-'; }
+"*" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '*'; }
+"/" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '/'; }
+";" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ';'; }
+"=" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '='; }
+"," { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ','; }
+":" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ':'; }
+":=" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ASSIGN; }
+"AND" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return AND; }
+"OR" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return OR; }
 
-"(" { col+=yyleng; inserer(yytext, "separateur", "null", false); return '('; }
-")" { col+=yyleng; inserer(yytext, "separateur", "null", false); return ')'; }
-"{" { col+=yyleng; inserer(yytext, "separateur", "null", false); return '{'; }
-"}" { col+=yyleng; inserer(yytext, "separateur", "null", false); return '}'; }
-"[" { col+=yyleng; inserer(yytext, "separateur", "null", false); return '['; }
-"]" { col+=yyleng; inserer(yytext, "separateur", "null", false); return ']'; }
-"!" { col+=yyleng; inserer(yytext, "separateur", "null", false); return '!'; }
+"(" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '('; }
+")" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ')'; }
+"{" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '{'; }
+"}" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '}'; }
+"[" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '['; }
+"]" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ']'; }
+"!" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '!'; }
 
-">" { col+=yyleng; inserer(yytext, "separateur", "null", false); return GT; }
-"<" { col+=yyleng; inserer(yytext, "separateur", "null", false); return LT; }
-">=" { col+=yyleng; inserer(yytext, "separateur", "null", false); return GE; }
-"<=" { col+=yyleng; inserer(yytext, "separateur", "null", false); return LE; }
-"==" { col+=yyleng; inserer(yytext, "separateur", "null", false); return EQ; }
-"!=" { col+=yyleng; inserer(yytext, "separateur", "null", false); return NE; }
+">" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return GT; }
+"<" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return LT; }
+">=" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return GE; }
+"<=" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return LE; }
+"==" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return EQ; }
+"!=" { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return NE; }
 
 {IDF} {
   if (idf_validation(yytext, yyleng)) {
     col += yyleng;
     yylval.str = strdup(yytext);
-    inserer(yytext,"Idf","null", false); // Insertion dans la table des symboles
     return IDF;
   } else {
     printf("\nErreur lexicale sur l'entité %s à la ligne %d et la colonne %d\n", yytext, nb_ligne, col);

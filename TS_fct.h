@@ -2,20 +2,21 @@
 #include <string.h>
 #include <stdbool.h>
 
-// Declaration de la TS
+
 typedef struct
 {
     char NomEntite[20];
     char CodeEntite[20];
     char TypeEntite[20];
     char Value[7];
+    int Length;
     bool isConst;
 
 } TypeTS;
 
 TypeTS ts[100];
 
-// init compteur
+
 int CpTS = 0;
 
 int recherche(char entite[])
@@ -34,29 +35,50 @@ int recherche(char entite[])
 
 // Fonction d'insertion des entités du programme dans la TS
 
-void inserer(char entite[], char code[], char type[], bool isConst)
+int inserer(char entite[], char code[], char type[], char isConst[])
 {
-    if (recherche(entite) == -1)
+    int index = recherche(entite);
+    if (index == -1)
     {
         strcpy(ts[CpTS].NomEntite, entite);
         strcpy(ts[CpTS].CodeEntite, code);
         strcpy(ts[CpTS].TypeEntite, type);
-        ts[CpTS].isConst = false;
-
+        strcpy(ts[CpTS].Value, "null");
+        ts[CpTS].isConst = (strcmp(isConst, "true") == 0) ? true : false;
+        ts[CpTS].Length = 0;
         CpTS++;
+        return 1;
     }
+    return -1;
 }
 
-void update(char entite[], char type[], char isConst[], char value[])
+int update(char entite[], char type[], char isConst[], char value[], int length)
 {
 
     int index = recherche(entite);
+
+    // the array length must be greater than 0
+    if (length <= 0)
+    {
+        ts[index].Length = 0;
+        return -2;
+    }
+
+    // si l'entite n'existe pas
+    if (index == -1)
+    {
+        return -1;
+    }
+
+    // si l'entite existe deja
     if (index != -1)
     {
         strcpy(ts[index].TypeEntite, type);
         strcpy(ts[index].Value, value);
         ts[index].isConst = (strcmp(isConst, "true") == 0);
+        ts[index].Length = length;
     }
+    return index + 1;
 }
 
 // Fonction d'affichage de la TS
@@ -92,17 +114,27 @@ void afficher()
     printf("_________________________________________________\n");
 
     printf("\n/***************Table des identifiants ******************/\n");
-    printf("_________________________________________________\n");
-    printf("\t| NomEntite | TypeEntite | Const  |  Value     |\n");
-    printf("_________________________________________________\n");
+    printf("___________________________________________________________________\n");
+    printf("\t| NomEntite | TypeEntite | Const      |  Value     |   Length   |\n");
+    printf("___________________________________________________________________\n");
     for (i = 0; i < CpTS; i++)
     {
         if (strcmp(ts[i].CodeEntite, "Idf") == 0)
         {
-            printf("\t|%10s |%10s |%6s |%6s | \n", ts[i].NomEntite, ts[i].TypeEntite, ts[i].isConst ? "true" : "false", ts[i].Value);
+            printf("\t|%10s |%10s  |%10s  |%10s  |%d \n", ts[i].NomEntite, ts[i].TypeEntite, ts[i].isConst ? "true" : "false", ts[i].Value, ts[i].Length);
         }
     }
     printf("_________________________________________________\n");
 
     printf("le nombre d'entites est : %d\n", CpTS);
+}
+
+int isConst(char entite[])
+{
+    int index = recherche(entite);
+    if (index == -1)
+    {
+        return -1;
+    }
+    return ts[index].isConst ? 1 : 0;
 }

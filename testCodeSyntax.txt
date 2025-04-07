@@ -1,9 +1,0 @@
-MainPrgm MyProgram ;
-Var
-     let x, y : Int ;
-    let A, B : [Int 10] ;  
-    let C : [Int; 5 ;    
-BeginPg
-    { 
-    }
-EndPg ;
