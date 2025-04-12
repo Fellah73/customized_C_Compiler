@@ -91,7 +91,7 @@ var_decl : LET var_list ':' type ';'
                         yyerrorSemantique(buffer);
                         yyerrok;
                     }
-                    else{
+                    else if(inserted != 0){
                           i= update(token, $4, "false","null",1);
                           printf("Declaration de variables %s de type %s\n",$2,$4);
                     }
@@ -209,11 +209,11 @@ const_decl : DEFINE CONST IDF ':' type '=' CST_INT ';'
                 }
               
             }
-           | DEFINE CONST IDF ':' type '=' error ';'
+           |DEFINE CONST IDF ':' type '=' error ';'
            { 
-               yyerror("Erreur: Valeur de constante invalide\n");
+               yyerror("Erreur: Valeur de constante doit etre un iniger ou float");
                yyerrok;
-           }
+           } 
            | DEFINE error
            {
                yyerror("Erreur dans la declaration de constante");
@@ -530,6 +530,7 @@ int yyerrorSemantique(const char *s) {
     nb_erreurs++;
     return 0;
 }
+
 
 int main() {
     printf("Analyse syntaxique...\n");

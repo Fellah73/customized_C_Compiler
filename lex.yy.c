@@ -461,6 +461,7 @@ char *yytext;
   #include <stdio.h>
   #include <string.h>
   #include <stdbool.h>
+  #include <stdlib.h> // Include for atof function
   #include <ctype.h>  
   #include "syntax.tab.h"
   
@@ -498,6 +499,34 @@ char *yytext;
     }
     return value;
   }
+
+  float float_validation(char number[]) {
+    int length = strlen(number);
+    char clean_number[20]; // Buffer to store the cleaned number
+    int index = 0;
+
+    // Remove parentheses if present
+    if (number[0] == '(' && number[length - 1] == ')') {
+      int i;
+      for (i = 1; i < length - 1; i++) {
+        clean_number[index++] = number[i];
+      }
+      clean_number[index] = '\0';
+    } else {
+      strcpy(clean_number, number);
+    }
+
+    // Remove '+' sign if present at the beginning
+    if (clean_number[0] == '+') {
+      memmove(clean_number, clean_number + 1, strlen(clean_number));
+    }
+
+    // Convert the cleaned string to a float
+    float value = atof(clean_number);
+
+  
+    return value;
+  }
   
   bool idf_validation(char idf[], int length) {
     if (length > 14) return false;  // Vérifier la longueur
@@ -514,7 +543,7 @@ char *yytext;
 /* CST */
 /* IDF */
 /* COMMENTS */
-#line 518 "lex.yy.c"
+#line 547 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -665,9 +694,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 71 "lexic.l"
+#line 100 "lexic.l"
 
-#line 671 "lex.yy.c"
+#line 700 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -752,250 +781,250 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 72 "lexic.l"
+#line 101 "lexic.l"
 { col+=yyleng;  inserer(yytext,"motCle","null", "false"); return MAINPRGM; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 73 "lexic.l"
+#line 102 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return VAR; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 74 "lexic.l"
+#line 103 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return BEGINPG; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 75 "lexic.l"
+#line 104 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return ENDPG; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 77 "lexic.l"
+#line 106 "lexic.l"
 { col+=yyleng; /* Ignorer les commentaires */ }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 78 "lexic.l"
+#line 107 "lexic.l"
 { col+=yyleng; /* Ignorer les commentaires */ }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 80 "lexic.l"
+#line 109 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return LET; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 81 "lexic.l"
+#line 110 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return DEFINE; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 82 "lexic.l"
+#line 111 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return CONST; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 83 "lexic.l"
+#line 112 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return INT; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 84 "lexic.l"
+#line 113 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return FLOAT; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 86 "lexic.l"
+#line 115 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return IF; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 87 "lexic.l"
+#line 116 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return THEN; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 88 "lexic.l"
+#line 117 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return ELSE; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 90 "lexic.l"
+#line 119 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return DO; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 91 "lexic.l"
+#line 120 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return WHILE; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 93 "lexic.l"
+#line 122 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return FOR; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 94 "lexic.l"
+#line 123 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return FROM; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 95 "lexic.l"
+#line 124 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return TO; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 96 "lexic.l"
+#line 125 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return STEP; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 98 "lexic.l"
+#line 127 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return INPUT; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 99 "lexic.l"
+#line 128 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return OUTPUT; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 101 "lexic.l"
+#line 130 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '+'; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 102 "lexic.l"
+#line 131 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '-'; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 103 "lexic.l"
+#line 132 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '*'; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 104 "lexic.l"
+#line 133 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '/'; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 105 "lexic.l"
+#line 134 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ';'; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 106 "lexic.l"
+#line 135 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '='; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 107 "lexic.l"
+#line 136 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ','; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 108 "lexic.l"
+#line 137 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ':'; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 109 "lexic.l"
+#line 138 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ASSIGN; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 110 "lexic.l"
+#line 139 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return AND; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 111 "lexic.l"
+#line 140 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return OR; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 113 "lexic.l"
+#line 142 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '('; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 114 "lexic.l"
+#line 143 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ')'; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 115 "lexic.l"
+#line 144 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '{'; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 116 "lexic.l"
+#line 145 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '}'; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 117 "lexic.l"
+#line 146 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '['; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 118 "lexic.l"
+#line 147 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ']'; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 119 "lexic.l"
+#line 148 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '!'; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 121 "lexic.l"
+#line 150 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return GT; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 122 "lexic.l"
+#line 151 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return LT; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 123 "lexic.l"
+#line 152 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return GE; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 124 "lexic.l"
+#line 153 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return LE; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 125 "lexic.l"
+#line 154 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return EQ; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 126 "lexic.l"
+#line 155 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return NE; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 128 "lexic.l"
+#line 157 "lexic.l"
 {
   if (idf_validation(yytext, yyleng)) {
     col += yyleng;
     yylval.str = strdup(yytext);
     return IDF;
   } else {
-    printf("\nErreur lexicale sur l'entite %s a la ligne %d et la colonne %d\n", yytext, nb_ligne, col);
+    printf("\nErreur lexicale sur l'entite %s a la ligne %d et la colonne %d\n", yytext, nb_ligne, col);   
   }
 }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 138 "lexic.l"
+#line 167 "lexic.l"
 {
   int value = atoi(yytext);
 
@@ -1010,26 +1039,30 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 150 "lexic.l"
+#line 179 "lexic.l"
 {
-  col+=yyleng;
-  yylval.reel = atof(yytext);
-  return CST_FLOAT;
+  if (float_validation(yytext)) {
+    col+=yyleng;
+    yylval.reel = float_validation(yytext);
+    return CST_FLOAT;
+  } else {
+    printf("\nErreur lexicale: Entier hors plage [-32768, 32767] a la ligne %d et la colonne %d\n", nb_ligne, col);
+  }
 }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 156 "lexic.l"
+#line 189 "lexic.l"
 { col+=yyleng; } /* Ignorer les espaces et tabulations */
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 157 "lexic.l"
+#line 190 "lexic.l"
 { nb_ligne++; col=1; } /* Nouvelle ligne */
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 159 "lexic.l"
+#line 192 "lexic.l"
 {
   printf("\nErreur lexicale sur l'entite %s a la ligne %d et la colonne %d\n", yytext, nb_ligne, col);
   col++;
@@ -1037,10 +1070,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 164 "lexic.l"
+#line 197 "lexic.l"
 ECHO;
 	YY_BREAK
-#line 1044 "lex.yy.c"
+#line 1077 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1926,6 +1959,6 @@ int main()
 	return 0;
 	}
 #endif
-#line 164 "lexic.l"
+#line 197 "lexic.l"
 
 int yywrap() {return 1;}

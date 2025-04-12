@@ -2,6 +2,7 @@
   #include <stdio.h>
   #include <string.h>
   #include <stdbool.h>
+  #include <stdlib.h> // Include for atof function
   #include <ctype.h>  
   #include "syntax.tab.h"
   
@@ -37,6 +38,34 @@
     if (value < -32768 || value > 32767) {
       return 0; // Return 0 to indicate out of range
     }
+    return value;
+  }
+
+  float float_validation(char number[]) {
+    int length = strlen(number);
+    char clean_number[20]; // Buffer to store the cleaned number
+    int index = 0;
+
+    // Remove parentheses if present
+    if (number[0] == '(' && number[length - 1] == ')') {
+      int i;
+      for (i = 1; i < length - 1; i++) {
+        clean_number[index++] = number[i];
+      }
+      clean_number[index] = '\0';
+    } else {
+      strcpy(clean_number, number);
+    }
+
+    // Remove '+' sign if present at the beginning
+    if (clean_number[0] == '+') {
+      memmove(clean_number, clean_number + 1, strlen(clean_number));
+    }
+
+    // Convert the cleaned string to a float
+    float value = atof(clean_number);
+
+  
     return value;
   }
   
@@ -131,7 +160,7 @@ COMMENTS_BLOCS "{--"([^-]|"-"[^-])*"--}"
     yylval.str = strdup(yytext);
     return IDF;
   } else {
-    printf("\nErreur lexicale sur l'entite %s a la ligne %d et la colonne %d\n", yytext, nb_ligne, col);
+    printf("\nErreur lexicale sur l'entite %s a la ligne %d et la colonne %d\n", yytext, nb_ligne, col);   
   }
 }
 
@@ -148,9 +177,13 @@ COMMENTS_BLOCS "{--"([^-]|"-"[^-])*"--}"
 }
 
 {CST_FLOAT} {
-  col+=yyleng;
-  yylval.reel = atof(yytext);
-  return CST_FLOAT;
+  if (float_validation(yytext)) {
+    col+=yyleng;
+    yylval.reel = float_validation(yytext);
+    return CST_FLOAT;
+  } else {
+    printf("\nErreur lexicale: Entier hors plage [-32768, 32767] a la ligne %d et la colonne %d\n", nb_ligne, col);
+  }
 }
 
 [ \t] { col+=yyleng; } /* Ignorer les espaces et tabulations */

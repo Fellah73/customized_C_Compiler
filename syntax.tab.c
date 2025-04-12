@@ -1619,7 +1619,7 @@ yyreduce:
                         yyerrorSemantique(buffer);
                         yyerrok;
                     }
-                    else{
+                    else if(inserted != 0){
                           i= update(token, (yyvsp[(4) - (5)].str), "false","null",1);
                           printf("Declaration de variables %s de type %s\n",(yyvsp[(2) - (5)].str),(yyvsp[(4) - (5)].str));
                     }
@@ -1785,7 +1785,7 @@ yyreduce:
 /* Line 1455 of yacc.c  */
 #line 213 "syntax.y"
     { 
-               yyerror("Erreur: Valeur de constante invalide\n");
+               yyerror("Erreur: Valeur de constante doit etre un iniger ou float");
                yyerrok;
            ;}
     break;
@@ -2436,6 +2436,7 @@ int yyerrorSemantique(const char *s) {
     nb_erreurs++;
     return 0;
 }
+
 
 int main() {
     printf("Analyse syntaxique...\n");

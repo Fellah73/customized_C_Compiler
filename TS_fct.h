@@ -37,6 +37,7 @@ int recherche(char entite[])
 
 int inserer(char entite[], char code[], char type[], char isConst[])
 {
+    if(entite[0] == '?') return 0;
     int index = recherche(entite);
     if (index == -1)
     {
