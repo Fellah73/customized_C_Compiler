@@ -9,11 +9,35 @@
   int nb_ligne=1;
   int col=1;
   
-  bool integer_validation(int number){
-    if(number < -32768 || number > 32767){
-      return false;
+  int integer_validation(char number[]) {
+    int length = strlen(number);
+    char clean_number[20]; // Buffer to store the cleaned number
+    int index = 0;
+
+    // Remove parentheses if present
+    if (number[0] == '(' && number[length - 1] == ')') {
+      int i;
+      for (i = 1; i < length - 1; i++) {
+        clean_number[index++] = number[i];
+      }
+      clean_number[index] = '\0';
+    } else {
+      strcpy(clean_number, number);
     }
-    return true;
+
+    // Remove '+' sign if present at the beginning
+    if (clean_number[0] == '+') {
+      memmove(clean_number, clean_number + 1, strlen(clean_number));
+    }
+
+    // Convert the cleaned string to an integer
+    int value = atoi(clean_number);
+
+    // Check if the value is within the range
+    if (value < -32768 || value > 32767) {
+      return 0; // Return 0 to indicate out of range
+    }
+    return value;
   }
   
   bool idf_validation(char idf[], int length) {
@@ -107,18 +131,19 @@ COMMENTS_BLOCS "{--"([^-]|"-"[^-])*"--}"
     yylval.str = strdup(yytext);
     return IDF;
   } else {
-    printf("\nErreur lexicale sur l'entité %s à la ligne %d et la colonne %d\n", yytext, nb_ligne, col);
+    printf("\nErreur lexicale sur l'entite %s a la ligne %d et la colonne %d\n", yytext, nb_ligne, col);
   }
 }
 
 {CST_INT} {
   int value = atoi(yytext);
-  if (integer_validation(value)) {
+
+  if (integer_validation(yytext)) {
     col+=yyleng;
-    yylval.entier = value;
+    yylval.entier = integer_validation(yytext);
     return CST_INT;
   } else {
-    printf("\nErreur lexicale: Entier hors plage [-32768, 32767] à la ligne %d et la colonne %d\n", nb_ligne, col);
+    printf("\nErreur lexicale: Entier hors plage [-32768, 32767] a la ligne %d et la colonne %d\n", nb_ligne, col);
   }
 }
 
@@ -132,7 +157,7 @@ COMMENTS_BLOCS "{--"([^-]|"-"[^-])*"--}"
 \n { nb_ligne++; col=1; } /* Nouvelle ligne */
 
 . {
-  printf("\nErreur lexicale sur l'entité %s à la ligne %d et la colonne %d\n", yytext, nb_ligne, col);
+  printf("\nErreur lexicale sur l'entite %s a la ligne %d et la colonne %d\n", yytext, nb_ligne, col);
   col++;
 }
 

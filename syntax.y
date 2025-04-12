@@ -87,8 +87,8 @@ var_decl : LET var_list ':' type ';'
                   while (token != NULL) {
                     int inserted = inserer(token,"Idf","null", "false");
                     if(inserted == -1){
-                        snprintf(buffer, sizeof(buffer), "Erreur: La variable %s n'est pas declaree\n", token);
-                        yyerror(buffer);
+                        snprintf(buffer, sizeof(buffer), "Erreur: double declaraion de l'entite %s\n", token);
+                        yyerrorSemantique(buffer);
                         yyerrok;
                     }
                     else{
@@ -209,9 +209,9 @@ const_decl : DEFINE CONST IDF ':' type '=' CST_INT ';'
                 }
               
             }
-           | DEFINE CONST IDF ':' type '=' error
+           | DEFINE CONST IDF ':' type '=' error ';'
            { 
-               yyerror("Erreur: Valeur de constante invalide ou point-virgule manquant");
+               yyerror("Erreur: Valeur de constante invalide\n");
                yyerrok;
            }
            | DEFINE error
@@ -520,13 +520,13 @@ expression : expression '+' expression
 
 /* Fonction d'affichage des erreurs */
 int yyerror(const char *s) {
-    printf("\nErreur Syntaxique a la ligne %d, colonne %d: %s", nb_ligne, col, s);
+    printf("\nErreur Syntaxique a la ligne %d, colonne %d: %s\n", nb_ligne, col, s);
     nb_erreurs++;
     return 0;
 }
 
 int yyerrorSemantique(const char *s) {
-    printf("\nErreur semantique a la ligne %d, colonne %d: %s", nb_ligne, col, s);
+    printf("\nErreur semantique a la ligne %d, colonne %d: %s\n", nb_ligne, col, s);
     nb_erreurs++;
     return 0;
 }
