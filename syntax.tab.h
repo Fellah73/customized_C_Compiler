@@ -81,17 +81,24 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 17 "syntax.y"
+#line 26 "syntax.y"
 
     int entier;
     float reel;
     char* str;
+    char* type;  // Ajout d'un champ pour le type
+    struct {
+        int value;
+        char *name;  // Pour les variables
+        int is_var;  // 1 si c'est une variable, 0 sinon
+        char *type;  // tracking du type
+    } expr_info;
 
 
 
 
 /* Line 1676 of yacc.c  */
-#line 95 "syntax.tab.h"
+#line 102 "syntax.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

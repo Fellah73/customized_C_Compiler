@@ -66,8 +66,7 @@
     printf("clear number%s\n", clean_number);
     // Convert the cleaned string to a float
     float value = atof(clean_number);
-
-     printf("value %f\n", value);
+    
     return value;
   }
   

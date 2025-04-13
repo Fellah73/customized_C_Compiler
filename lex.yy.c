@@ -525,8 +525,7 @@ char *yytext;
     printf("clear number%s\n", clean_number);
     // Convert the cleaned string to a float
     float value = atof(clean_number);
-
-     printf("value %f\n", value);
+    
     return value;
   }
   
@@ -545,7 +544,7 @@ char *yytext;
 /* CST */
 /* IDF */
 /* COMMENTS */
-#line 549 "lex.yy.c"
+#line 548 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -696,9 +695,9 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 102 "lexic.l"
+#line 101 "lexic.l"
 
-#line 702 "lex.yy.c"
+#line 701 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -783,237 +782,237 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 103 "lexic.l"
+#line 102 "lexic.l"
 { col+=yyleng;  inserer(yytext,"motCle","null", "false"); return MAINPRGM; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 104 "lexic.l"
+#line 103 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return VAR; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 105 "lexic.l"
+#line 104 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return BEGINPG; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 106 "lexic.l"
+#line 105 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return ENDPG; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 108 "lexic.l"
+#line 107 "lexic.l"
 { col+=yyleng; /* Ignorer les commentaires */ }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 109 "lexic.l"
+#line 108 "lexic.l"
 { col+=yyleng; /* Ignorer les commentaires */ }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 111 "lexic.l"
+#line 110 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return LET; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 112 "lexic.l"
+#line 111 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return DEFINE; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 113 "lexic.l"
+#line 112 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return CONST; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 114 "lexic.l"
+#line 113 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return INT; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 115 "lexic.l"
+#line 114 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return FLOAT; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 117 "lexic.l"
+#line 116 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return IF; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 118 "lexic.l"
+#line 117 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return THEN; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 119 "lexic.l"
+#line 118 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return ELSE; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 121 "lexic.l"
+#line 120 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return DO; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 122 "lexic.l"
+#line 121 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return WHILE; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 124 "lexic.l"
+#line 123 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return FOR; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 125 "lexic.l"
+#line 124 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return FROM; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 126 "lexic.l"
+#line 125 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return TO; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 127 "lexic.l"
+#line 126 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return STEP; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 129 "lexic.l"
+#line 128 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return INPUT; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 130 "lexic.l"
+#line 129 "lexic.l"
 { col+=yyleng; inserer(yytext,"motCle","null", "false"); return OUTPUT; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 132 "lexic.l"
+#line 131 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '+'; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 133 "lexic.l"
+#line 132 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '-'; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 134 "lexic.l"
+#line 133 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '*'; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 135 "lexic.l"
+#line 134 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '/'; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 136 "lexic.l"
+#line 135 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ';'; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 137 "lexic.l"
+#line 136 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '='; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 138 "lexic.l"
+#line 137 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ','; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 139 "lexic.l"
+#line 138 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ':'; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 140 "lexic.l"
+#line 139 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ASSIGN; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 141 "lexic.l"
+#line 140 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return AND; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 142 "lexic.l"
+#line 141 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return OR; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 144 "lexic.l"
+#line 143 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '('; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 145 "lexic.l"
+#line 144 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ')'; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 146 "lexic.l"
+#line 145 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '{'; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 147 "lexic.l"
+#line 146 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '}'; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 148 "lexic.l"
+#line 147 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '['; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 149 "lexic.l"
+#line 148 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return ']'; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 150 "lexic.l"
+#line 149 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return '!'; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 152 "lexic.l"
+#line 151 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return GT; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 153 "lexic.l"
+#line 152 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return LT; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 154 "lexic.l"
+#line 153 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return GE; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 155 "lexic.l"
+#line 154 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return LE; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 156 "lexic.l"
+#line 155 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return EQ; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 157 "lexic.l"
+#line 156 "lexic.l"
 { col+=yyleng; inserer(yytext, "separateur", "null", "false"); return NE; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 159 "lexic.l"
+#line 158 "lexic.l"
 {
   if (idf_validation(yytext, yyleng)) {
     col += yyleng;
@@ -1026,7 +1025,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 169 "lexic.l"
+#line 168 "lexic.l"
 {
   int value = atoi(yytext);
 
@@ -1041,7 +1040,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 181 "lexic.l"
+#line 180 "lexic.l"
 {
   if (float_validation(yytext)) {
     col+=yyleng;
@@ -1054,17 +1053,17 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 191 "lexic.l"
+#line 190 "lexic.l"
 { col+=yyleng; } /* Ignorer les espaces et tabulations */
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 192 "lexic.l"
+#line 191 "lexic.l"
 { nb_ligne++; col=1; } /* Nouvelle ligne */
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 194 "lexic.l"
+#line 193 "lexic.l"
 {
   printf("\nErreur lexicale sur l'entite %s a la ligne %d et la colonne %d\n", yytext, nb_ligne, col);
   col++;
@@ -1072,10 +1071,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 199 "lexic.l"
+#line 198 "lexic.l"
 ECHO;
 	YY_BREAK
-#line 1079 "lex.yy.c"
+#line 1078 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1961,6 +1960,6 @@ int main()
 	return 0;
 	}
 #endif
-#line 199 "lexic.l"
+#line 198 "lexic.l"
 
 int yywrap() {return 1;}
