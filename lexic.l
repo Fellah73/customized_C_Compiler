@@ -26,6 +26,7 @@
       strcpy(clean_number, number);
     }
 
+    
     // Remove '+' sign if present at the beginning
     if (clean_number[0] == '+') {
       memmove(clean_number, clean_number + 1, strlen(clean_number));
@@ -33,10 +34,10 @@
 
     // Convert the cleaned string to an integer
     int value = atoi(clean_number);
-
+   
     // Check if the value is within the range
     if (value < -32768 || value > 32767) {
-      return 0; // Return 0 to indicate out of range
+      return 33000; // Return 0 to indicate out of range
     }
     return value;
   }
@@ -62,10 +63,11 @@
       memmove(clean_number, clean_number + 1, strlen(clean_number));
     }
 
+    printf("clear number%s\n", clean_number);
     // Convert the cleaned string to a float
     float value = atof(clean_number);
 
-  
+     printf("value %f\n", value);
     return value;
   }
   
@@ -167,7 +169,7 @@ COMMENTS_BLOCS "{--"([^-]|"-"[^-])*"--}"
 {CST_INT} {
   int value = atoi(yytext);
 
-  if (integer_validation(yytext)) {
+  if (integer_validation(yytext) != 33000) {
     col+=yyleng;
     yylval.entier = integer_validation(yytext);
     return CST_INT;
@@ -182,7 +184,7 @@ COMMENTS_BLOCS "{--"([^-]|"-"[^-])*"--}"
     yylval.reel = float_validation(yytext);
     return CST_FLOAT;
   } else {
-    printf("\nErreur lexicale: Entier hors plage [-32768, 32767] a la ligne %d et la colonne %d\n", nb_ligne, col);
+    printf("\nErreur lexicale: Float mal forme a la ligne %d et la colonne %d\n", nb_ligne, col);
   }
 }
 

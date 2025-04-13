@@ -93,7 +93,7 @@ var_decl : LET var_list ':' type ';'
                     }
                     else if(inserted != 0){
                           i= update(token, $4, "false","null",1);
-                          printf("Declaration de variables %s de type %s\n",$2,$4);
+                          printf("\nDeclaration de variables %s de type %s\n",token,$4);
                     }
                        token = strtok(NULL, ",");
                     } 
@@ -108,8 +108,7 @@ var_decl : LET var_list ':' type ';'
                           snprintf(buffer, sizeof(buffer), "Erreur: double delaration de l'entite %s\n", token);
                           yyerrorSemantique(buffer);
                           yyerrok;
-                      }
-                      else{
+                      }else if(inserted != 0){
                        if($7 <= 0){
                          snprintf(buffer, sizeof(buffer), "Erreur: La taille du tableau %s doit etre positive\n", token);
                          yyerror(buffer);
@@ -123,7 +122,7 @@ var_decl : LET var_list ':' type ';'
                              yyerrok;
                              break;
                          default:
-                             printf("Declaration de tableau %s de type %s [%d]\n", $2, $5, $7);
+                             printf("\nDeclaration de tableau %s de type %s [%d]\n", $2, $5, $7);
                              break;
                                           } 
                               }}
@@ -141,12 +140,16 @@ var_decl : LET var_list ':' type ';'
              yyerror("Erreur: Type invalide dans la declaration de variable \n");
              yyerrok;
          }
-         | LET error
+         | LET error ':' type ';'
          {
-             yyerror("Erreur dans la declaration de variable\n");
+             yyerror("l'une des varialbles est mal declares\n");
              yyerrok;
-         }
-         ;
+         };
+         | LET error ':' '[' type ';' CST_INT ']' ';'
+         {
+             yyerror("l'un des array est mal declares est mal declares\n");
+             yyerrok;
+         };
 
 /* Liste des variables */
 var_list : IDF ',' var_list {
@@ -159,8 +162,7 @@ var_list : IDF ',' var_list {
     $$ = strdup($1);  // Copie du nom
 }
 | error {
-    yyerror("Erreur dans la liste des variables\n");
-    yyerrok;
+
     $$ = strdup("???");
 };
 
@@ -171,7 +173,7 @@ const_decl : DEFINE CONST IDF ':' type '=' CST_INT ';'
               char value_str[12],buffer[100];
               int inserted= inserer($3,"Idf","null", "false");
               if(inserted == -1){
-                  yyerrorSemantique(buffer,"Erreur: double delaration de l'entite %s\n", $3);
+                  yyerrorSemantique(buffer,"\nErreur: double delaration de l'entite %s\n", $3);
                   yyerror(buffer);
                   yyerrok;
                   return;
@@ -180,11 +182,11 @@ const_decl : DEFINE CONST IDF ':' type '=' CST_INT ';'
                 snprintf(value_str, sizeof(value_str), "%d", $7);
                  int i= update($3,"Int","true",value_str,1);
                 if(i == -1){
-                    sprintf(buffer, "Erreur dans la declaration de constante %s \n", $3);
+                    sprintf(buffer, "\nErreur dans la declaration de constante %s \n", $3);
                     yyerror(buffer);
                     yyerrok;
                 }else{
-                    printf("Declaration de constante entiere %s = %d\n ",$3,$7);
+                    printf("\nDeclaration de constante entiere %s = %d\n ",$3,$7);
                   }
             }
            | DEFINE CONST IDF ':' type '=' CST_FLOAT ';'
@@ -193,19 +195,18 @@ const_decl : DEFINE CONST IDF ':' type '=' CST_INT ';'
               char value_str[12],buffer[100];
               int inserted= inserer($3,"Idf","null", "false");
                 if(inserted == -1){
-                    yyerrorSemantique("Erreur: double delaration de l'entite %s\n", $3);
-                    yyerror("entite a une erreur \n");
+                    yyerrorSemantique("\nErreur: double delaration de l'entite %s\n", $3);
                     yyerrok;
                     return;
                 }
                 snprintf(value_str, sizeof(value_str), "%f", $7);
                  int i= update($3,"Float","true",value_str,1);
                 if(i == -1){
-                    sprintf(buffer,"Erreur dans la declaration de constante %s \n", $3);
+                    sprintf(buffer,"\nErreur dans la declaration de constante %s \n", $3);
                     yyerror(buffer);
                     yyerrok;
                 }else{
-                    printf("Declaration de constante flottante %s = %f\n ",$3,$7);
+                    printf("\nDeclaration de constante flottante %s = %f\n ",$3,$7);
                 }
               
             }
@@ -228,7 +229,7 @@ type : INT {
 | FLOAT {
     $$ = strdup("Float");
 }
-| error {
+| error  {
     yyerror("Type non reconnu");
     yyerrok;
     $$ = strdup("Unknown");
@@ -310,7 +311,7 @@ affectation : IDF ASSIGN expression ';'
                }
 
                if (!erreur) {
-                   printf("Affectation pour tableau %s[%d] \n", $1, $3);
+                   printf("\nAffectation pour tableau %s[%d] \n", $1, $3);
                }
             }
             | IDF '[' CST_INT ']' '=' expression ';' {
@@ -337,9 +338,9 @@ affectation : IDF ASSIGN expression ';'
             ;
 
 condition : IF '(' expression ')' THEN '{' instructions '}'
-          { printf("Condition if sans else\n"); }
+          { printf("\nCondition if sans else\n"); }
           | IF '(' expression ')' THEN '{' instructions '}' ELSE '{' instructions '}'
-          { printf("Condition if-else\n"); }
+          { printf("\nCondition if-else\n"); }
           | IF '(' error ')' THEN '{' instructions '}'
           {
               yyerror("Erreur dans la condition du if");
@@ -358,7 +359,7 @@ condition : IF '(' expression ')' THEN '{' instructions '}'
           ;
 
 boucle_do : DO '{' instructions '}' WHILE '(' expression ')' ';'
-          { printf("Boucle do-while\n"); }
+          { printf("\nBoucle do-while\n"); }
           | DO '{' instructions '}' WHILE error ';'
           {
               yyerror("Erreur: Parentheses manquantes autour de la condition while");
@@ -384,7 +385,7 @@ boucle_for : FOR IDF FROM expression TO expression STEP expression '{' instructi
 
                     // no problem
                 } else  {
-                        printf("boucle for bien forme \n");
+                        printf("\nboucle for bien forme \n");
                 } 
 
             }
@@ -426,7 +427,7 @@ lecture : INPUT '(' IDF ')' ';'
 
 ecriture : OUTPUT '(' expression_liste ')' ';'
          { 
-                printf("Instruction output appele \n");
+                printf("\nInstruction output appele \n");
          } 
          | OUTPUT error
          {
@@ -476,7 +477,7 @@ expression : expression '+' expression
     
                      // appedend a value to a const
                 } else  {
-                     printf("Expression pour entite %s \n",$1);
+                     printf("\nExpression pour entite %s \n",$1);
                 }
            }
            | IDF '[' CST_INT ']'
@@ -503,7 +504,7 @@ expression : expression '+' expression
                }
 
                if (!erreur) {
-                   printf("Affectation pour tableau %s[%d] \n", $1, $3);
+                   printf("\nAffectation pour tableau %s[%d] \n", $1, $3);
                }
               }
            | CST_INT

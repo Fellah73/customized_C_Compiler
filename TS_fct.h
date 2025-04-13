@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-
 typedef struct
 {
     char NomEntite[20];
@@ -15,7 +14,6 @@ typedef struct
 } TypeTS;
 
 TypeTS ts[100];
-
 
 int CpTS = 0;
 
@@ -37,7 +35,10 @@ int recherche(char entite[])
 
 int inserer(char entite[], char code[], char type[], char isConst[])
 {
-    if(entite[0] == '?') return 0;
+    if (entite[0] == '?' && entite[1] == '?' && entite[2] == '?')
+    {
+        return 0;
+    }
     int index = recherche(entite);
     if (index == -1)
     {

@@ -1,12 +1,16 @@
 MainPrgm MyProgram2;
 Var
-    let x5 : Int ;
-    @define Const b : Float = (100.05) ;
-    @define Const c : Float = 106.05 ;
+    
+   let x,y : Int;
+   let a,a : [ Float; 2 ];
+    @define Const b : Float = 0 ;
 BeginPg
     { 
-
-     
+   
+    undeclaredVar := 1;
+    x[0] := 1;
+    a[2] := 1;
+    b:=1;
               
      
     }
