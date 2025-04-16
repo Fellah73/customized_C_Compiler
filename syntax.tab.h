@@ -86,12 +86,12 @@ typedef union YYSTYPE
     int entier;
     float reel;
     char* str;
-    char* type;  // Ajout d'un champ pour le type
+    char* type;  
     struct {
         int value;
-        char *name;  // Pour les variables
-        int is_var;  // 1 si c'est une variable, 0 sinon
-        char *type;  // tracking du type
+        char *name; 
+        int is_var;  
+        char *type;  
     } expr_info;
 
 

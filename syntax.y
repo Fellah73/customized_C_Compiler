@@ -10,15 +10,15 @@
     extern char* yytext;
     int yyerror(const char *s);
     
-    // Compteur d'erreurs
+    
     int nb_erreurs = 0;
 
-    // Structure pour stocker les informations d'une expression
+    
     typedef struct {
         int value;
-        char *name;  // Pour les variables
-        int is_var;  // 1 si c'est une variable, 0 sinon
-        char *type;  // tracking du type
+        char *name;  
+        int is_var;  
+        char *type;  
     } ExprInfo;
 
 %}
@@ -27,12 +27,12 @@
     int entier;
     float reel;
     char* str;
-    char* type;  // Ajout d'un champ pour le type
+    char* type;  
     struct {
         int value;
-        char *name;  // Pour les variables
-        int is_var;  // 1 si c'est une variable, 0 sinon
-        char *type;  // tracking du type
+        char *name; 
+        int is_var;  
+        char *type;  
     } expr_info;
 
 }
@@ -63,7 +63,7 @@
 
 %%
 
-/* Definition de la structure globale du programme */
+
 programme : MAINPRGM IDF ';' VAR declarations BEGINPG '{' instructions '}' ENDPG ';'
           {  
               inserer($2,"motCle","null", "false");
@@ -80,10 +80,10 @@ programme : MAINPRGM IDF ';' VAR declarations BEGINPG '{' instructions '}' ENDPG
           }
           ;
 
-/* Declarations de variables et constantes */
+
 declarations : declaration declarations
              | declaration
-             | /* vide */
+             |
              ;
 
 declaration : var_decl
@@ -99,7 +99,7 @@ declaration : var_decl
 var_decl : LET var_list ':' type ';'
          {
             int i = 0;
-            char *token = strtok(strdup($2), ",");  // Utilisez strdup pour éviter de modifier $2
+            char *token = strtok(strdup($2), ",");  
             char buffer[100];
             while (token != NULL) {
                 int i = recherche(token);
@@ -111,7 +111,7 @@ var_decl : LET var_list ':' type ';'
                 } else {
                     int inserted = inserer(token, "Idf", "null", "false");
                     i = update(token, $4, "false", "null", 1);
-                    printf("Declaration de variables %s de type %s\n", token, $4);
+                    printf("\nDeclaration de variables %s de type %s\n", token, $4);
                 }
                 token = strtok(NULL, ",");
             }
@@ -167,6 +167,12 @@ var_decl : LET var_list ':' type ';'
          {
              yyerror("l'un des array est mal declares est mal declares\n");
              yyerrok;
+         }
+         |   LET var_list ':' '[' type error ']' ';'
+         {
+            yyerror("Erreur: Mauvaise declaration du tableau. Syntaxe attendue: [type;taille] \n");
+             yyerrok;
+              
          };
 
 /* Liste des variables */
@@ -207,7 +213,7 @@ const_decl : DEFINE CONST IDF ':' type '=' CST_INT ';'
                             yyerror(buffer);
                             yyerrok;
                         } else {
-                            printf("Declaration de constante entiere %s = %d\n", $3, $7);
+                            printf("\nDeclaration de constante entiere %s = %d\n", $3, $7);
                         }
                     }
                 }
@@ -235,7 +241,7 @@ const_decl : DEFINE CONST IDF ':' type '=' CST_INT ';'
                             yyerror(buffer);
                             yyerrok;
                         } else {
-                            printf("Declaration de constante flottante %s = %f\n", $3, $7);
+                            printf("\nDeclaration de constante flottante %s = %f\n", $3, $7);
                         }
                     }
                 }
@@ -245,7 +251,17 @@ const_decl : DEFINE CONST IDF ':' type '=' CST_INT ';'
                yyerror("Erreur: Valeur de constante doit etre un iniger ou float");
                yyerrok;
            } 
-           | DEFINE error
+           |DEFINE CONST IDF '=' CST_INT ';'
+           { 
+               yyerror("Erreur: constante sans type");
+               yyerrok;
+           } 
+           |DEFINE CONST IDF '=' CST_FLOAT ';'
+           { 
+               yyerror("Erreur: constante sans type");
+               yyerrok;
+           } 
+           | DEFINE error ';'
            {
                yyerror("Erreur dans la declaration de constante");
                yyerrok;
@@ -266,10 +282,10 @@ type : INT {
     };
 
 
-/* Instructions */
+
 instructions : instruction instructions
              | instruction
-             | /* vide */
+             | 
              ;
 
 instruction : affectation
@@ -318,7 +334,7 @@ affectation : IDF ASSIGN expression ';'
                     }
 
                     if (!type_error) {
-                        printf("Affectation pour entite %s \n", $1);
+                        printf("\nAffectation pour entite %s \n", $1);
                         if ($3.is_var) {
                             int expr_idx = recherche($3.name);
                             if (expr_idx != -1) {
@@ -361,7 +377,7 @@ affectation : IDF ASSIGN expression ';'
                }
 
                if (!erreur) {
-                printf("Affectation pour tableau %s[%d] \n", $1, $3);
+                printf("\nAffectation pour tableau %s[%d] \n", $1, $3);
                 if ($6.is_var) {
                      // Si c'est une variable, on récupère sa valeur de la table des symboles
                      int expr_idx = recherche($6.name);
@@ -381,7 +397,7 @@ affectation : IDF ASSIGN expression ';'
                 yyerror(buffer);
                 yyerrok;
             }
-            | IDF ASSIGN expression error
+            | IDF ASSIGN expression
             { 
                 yyerror("Erreur: Point-virgule manquant apres l'affectation");
                 yyerrok;
@@ -396,6 +412,16 @@ affectation : IDF ASSIGN expression ';'
                 yyerror("Erreur: Identificateur invalide dans l'affectation");
                 yyerrok;
             }
+            | IDF ASSIGN error ';'
+            {
+                yyerror("Erreur: vous affectez une valeur invalide");
+                yyerrok;
+            }
+            | IDF '['CST_INT ']' ASSIGN error ';'
+            {
+                yyerror("Erreur: vous affectez une valeur invalide au tableau");
+                yyerrok;
+            }
             ;
 
 condition : IF '(' expression ')' THEN '{' instructions '}'
@@ -407,11 +433,32 @@ condition : IF '(' expression ')' THEN '{' instructions '}'
               yyerror("Erreur dans la condition du if");
               yyerrok;
           }
-          | IF error 
-          {
-              yyerror("Erreur: Syntaxe incorrecte pour la condition if -if error");
+           | IF '(' expression ')' THEN '{' instructions
+           {
+            yyerror("Erreur: syntaxe du else incorrect");
+             yyerrok;
+           }
+           | IF '(' expression ')' THEN  instructions '}'
+           {
+            yyerror("Erreur: syntaxe du else incorrect");
+             yyerrok;
+           }
+        
+          | IF expression THEN '{' instructions '}'
+           {
+              yyerror("Erreur: parenthese du exprssion manquant");
               yyerrok;
-          }
+           }
+           | IF '(' expression ')' THEN '{' instructions '}' ELSE '{' instructions 
+           {
+            yyerror("Erreur:erreur dans le else ");
+             yyerrok;
+           }
+           | IF '(' expression ')' THEN '{' instructions '}' ELSE  instructions '}'
+           {
+            yyerror("Erreur:erreur dans le else ");
+             yyerrok;
+           }
           | error 
           {
               yyerror("Erreur: Syntaxe incorrecte pour la condition if -error");
@@ -450,6 +497,11 @@ boucle_for : FOR IDF FROM expression TO expression STEP expression '{' instructi
                 } 
 
             }
+            | FOR error FROM expression TO expression STEP expression '{' instruction '}'
+            {
+                yyerror("Erreur: Syntaxe incorrecte pour la boucle for");
+                yyerrok;    
+            }
            | FOR error
            {
                yyerror("Erreur: Syntaxe incorrecte pour la boucle for");
@@ -470,13 +522,13 @@ lecture : INPUT '(' IDF ')' ';'
 
                     // appedend a value to a const
                 } else  {
-                    printf("Instruction input pour entite %s \n",$3);
+                    printf("\nInstruction input pour entite %s \n",$3);
                 } 
 
          }
         | INPUT '(' error ')' ';'
         {
-            yyerror("Erreur: Identificateur invalide dans l'instruction input");
+            yyerror("Erreur: expression invalide dans l'instruction input");
             yyerrok;
         }
         | INPUT error
@@ -489,8 +541,18 @@ lecture : INPUT '(' IDF ')' ';'
 ecriture : OUTPUT '(' expression_liste ')' ';'
          { 
                 printf("\nInstruction output appele \n");
-         } 
-         | OUTPUT error
+         }
+         | OUTPUT '(' expression_liste ';'
+         {
+            yyerror("Erreur: parenthese fermant manquant pour le output");
+             yyerrok;
+         }
+         |  OUTPUT expression_liste ')' ';'
+         {
+            yyerror("Erreur: parenthese ouvrant manquant pour le output");
+             yyerrok;
+         }
+         | OUTPUT error ';'
          {
              yyerror("Erreur: Syntaxe incorrecte pour l'instruction output");
              yyerrok;
@@ -625,7 +687,7 @@ expression : expression '+' expression
                 $$.value = 0;
                 $$.name = NULL;
             } else {
-                printf("Expression pour entite %s \n",$1);
+                
                 $$.is_var = 1;
                 $$.name = strdup($1);
                 
@@ -670,10 +732,10 @@ expression : expression '+' expression
             }
 
             if (!erreur) {
-                printf("Utilisation du tableau %s[%d] dans une expression\n", $1, $3);
+                printf("\nUtilisation du tableau %s[%d] dans une expression\n", $1, $3);
                 $$.is_var = 1;
-                $$.name = strdup($1);  // Name of array
-                $$.value = 0;  // Default value, would need array access mechanism
+                $$.name = strdup($1);  
+                $$.value = 0;  
             }
         }
         | CST_INT
@@ -684,7 +746,7 @@ expression : expression '+' expression
         }
         | CST_FLOAT
         {
-            $$.value = (int)$1;  // Convert to int for simplicity
+            $$.value = (int)$1; 
             $$.is_var = 0;
             $$.name = NULL;
         }
@@ -699,8 +761,7 @@ expression : expression '+' expression
         ;
 
         %%
-/* Fonction d'affichage de la table des symboles */
-/* Fonction d'affichage des erreurs */
+
 int yyerror(const char *s) {
     printf("\nErreur Syntaxique a la ligne %d, colonne %d: %s\n", nb_ligne, col, s);
     nb_erreurs++;
@@ -715,7 +776,7 @@ int yyerrorSemantique(const char *s) {
 
 
 int main() {
-    printf("Analyse du programme...\n");
+    printf("\nAnalyse du programme...\n");
     yyparse();  
     afficher();
     return 0;

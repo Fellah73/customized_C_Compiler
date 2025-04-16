@@ -2,7 +2,7 @@
   #include <stdio.h>
   #include <string.h>
   #include <stdbool.h>
-  #include <stdlib.h> // Include for atof function
+  #include <stdlib.h> 
   #include <ctype.h>  
   #include "syntax.tab.h"
   
@@ -12,10 +12,9 @@
   
   int integer_validation(char number[]) {
     int length = strlen(number);
-    char clean_number[20]; // Buffer to store the cleaned number
+    char clean_number[20];
     int index = 0;
 
-    // Remove parentheses if present
     if (number[0] == '(' && number[length - 1] == ')') {
       int i;
       for (i = 1; i < length - 1; i++) {
@@ -26,28 +25,23 @@
       strcpy(clean_number, number);
     }
 
-    
-    // Remove '+' sign if present at the beginning
     if (clean_number[0] == '+') {
       memmove(clean_number, clean_number + 1, strlen(clean_number));
     }
 
-    // Convert the cleaned string to an integer
     int value = atoi(clean_number);
-   
-    // Check if the value is within the range
+
     if (value < -32768 || value > 32767) {
-      return 33000; // Return 0 to indicate out of range
+      return 33000;
     }
     return value;
   }
 
   float float_validation(char number[]) {
     int length = strlen(number);
-    char clean_number[20]; // Buffer to store the cleaned number
+    char clean_number[20];
     int index = 0;
 
-    // Remove parentheses if present
     if (number[0] == '(' && number[length - 1] == ')') {
       int i;
       for (i = 1; i < length - 1; i++) {
@@ -58,24 +52,20 @@
       strcpy(clean_number, number);
     }
 
-    // Remove '+' sign if present at the beginning
     if (clean_number[0] == '+') {
       memmove(clean_number, clean_number + 1, strlen(clean_number));
     }
 
-    printf("clear number%s\n", clean_number);
-    // Convert the cleaned string to a float
     float value = atof(clean_number);
-    
+
     return value;
   }
   
   bool idf_validation(char idf[], int length) {
-    if (length > 14) return false;  // Vérifier la longueur
-    if (idf[length - 1] == '_' || !isalpha(idf[0])) return false;  // Vérifier le début et la fin
+    if (length > 14) return false; 
+    if (idf[length - 1] == '_' || !isalpha(idf[0])) return false; 
     
     int i;
-    // Verifier "__" sans acces hors limites
     for (i = 0; i < length - 1; i++) {
       if (idf[i] == '_' && idf[i + 1] == '_') return false;
     }
@@ -95,7 +85,7 @@ CST_FLOAT \([+-]{chiffre}+\.{chiffre}+\)|{chiffre}+\.{chiffre}+
 IDF {lettre}({lettre}|{chiffre}|_)*
 
 /* COMMENTS */
-COMMENT_LINE "< !-"[^\n]*"-!>"
+COMMENT_LINE "<!-"[^\n]*"-!>"
 COMMENTS_BLOCS "{--"([^-]|"-"[^-])*"--}"
 
 %%

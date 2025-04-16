@@ -1,15 +1,71 @@
-MainPrgm  L3_software ; 
-Var  
-let f : Float;
-let x,y,z : Int ; 
-@define Const Software : Int = 91 ;  
-BeginPg 
-{ 
-    f := 2.5 ;
-    Software :=10;
-    x := 3;
-    y := (5);
+MainPrgm MiniSoft;
 
-    z:= x+y;       
-} 
-EndPg ;
+Var
+    let x, y, z : Int;
+    let pi : Float;
+    let A, B : [Int; 10];
+    let F : [Float; 5];
+
+    @define Const MaxValue : Int = 100;
+    @define Const PiValue : Float = 3.14;
+
+BeginPg
+{
+    <!- Affectation de constantes -!>
+    x := MaxValue;
+    pi := PiValue;
+
+    <!- Affectations simples -!>
+    y := 20;
+    z := (x + y) * 2;
+    pi := (3.0 + 5.2) / 2;
+
+    <!- Affectation dans des tableaux -!>
+    A[0] := x;
+    B[1] := (z - y + (-3)) * 2;
+    F[2] := (pi + 1.5) / 2;
+
+    <!- Boucle do-while -!>
+    do {
+        x := x + 1;
+    } while (x < 10);
+
+    
+
+    <!- Condition if-else -!>
+    if (x > y AND y < z) then
+    {
+        z := z + 1;
+    }
+    else
+    {
+        z := z - 1;
+    }
+
+    <!- Opérateurs logiques et comparaisons -!>
+    if (!(x == y) OR (z >= x)) then
+    {
+        x := x + 1;
+    }
+    else
+    {
+        x := x - 1;
+    }
+
+    <!- Entrée/Sortie -!>
+    input(x);
+ 
+
+    {-- Ceci est un commentaire
+        multiligne dans le programme
+    --}
+
+    <!- Ceci est un commentaire sur une seule ligne-!>
+
+    <!- Boucle for -!>
+    for x from 0 to 5 step 1 {
+        A[0] := x * 2;
+    }
+
+}
+EndPg;
