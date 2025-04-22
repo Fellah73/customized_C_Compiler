@@ -1,49 +1,70 @@
-MainPrgm TestSemantique;
+MainPrgm L3_soft_test ;
 
 Var
-    let x : Int;
-    let x : Float;              
-    let A : [Int; 1];           
-    let B : [Float; 5];             
+    <!- Erreurs lexicales -!>
+    let invalid__id : Int;   <!- Double underscore -!>
+    let too_long_identifier_name_error : Int;  <!- Plus de 14 caractères -!>
+    let id_ : Int;  <!- Se termine par un underscore -!>
+    let @invalid : Int;  <!- Caractère non autorisé -!>
+    let 123abc : Int;  <!- Commence par un chiffre -!>
+    @define Const InvalidInt : Int = 40000;  <!- Entier hors limites [0,32767] -!>
+    @define Const InvalidSignedInt : Int = (-40000);  <!- Entier signé hors limites [-32768,32767] -!>
     
-
-    @define Const x : Int = 10;  
-    @define Const y : Float = 3.14;
-    @define Const z : Float = 5.0;
-    @define Const y : Int = 20;  
+    <!- Erreurs syntaxiques -!>
+    let x, y Int;  <!- Manque le ':' -!>
+    let a, b : [Int ; 5];  <!- Manque le ';' dans la déclaration du tableau -!>
+    @define Const MissingType = 100;  <!- Type manquant -!>
+    let c : Int;  <!- Liste de variables incorrecte -!>
+    
+    <!- Erreurs sémantiques -!>
+    let x, y, x : Int;  <!- Double déclaration de x -!>
+    @define Const MaxValue : Int = 100;
+    @define Const MaxValue : Float = 200.5;  <!- Double déclaration de constante -!>
+    let A : [Int; 5];
+    let B : [Float; 3];
 
 BeginPg
 {
-  
-  
-   
-    y := 25;
-
-  
-    k := 30;
-
-  
-    B[10] := 3.0;
-
-  
-    x := 3.5;
-
-      y[1] := 4;
-
-  
-    z := 2.5;
-
-   
-    if (x = 10) then {
-        x := 20;
-    }
-
+    <!- Erreurs lexicales dans les instructions -!>
+    x := 12345678901;  <!- Nombre trop grand -!>
+    y := 3.14;  <!- Utilisation de virgule au lieu de point -!>
     
-
-
-    C[2] := 10;
-
-    output(UnDeclared);
-
+    <!- Erreurs syntaxiques dans les instructions -!>
+    x := 5  <!- Manque le ';' -!>
+    x = 10;  <!- Utilisation de '=' au lieu de ':=' -!>
+    if x > 5 then {  <!- Manque les parenthèses autour de la condition -!>
+        y := 10;
+    }
+    
+    <!- Erreurs sémantiques -!>
+    z := 10;  <!- Variable non déclarée -!>
+    C[0] := 5;  <!- Tableau non déclaré -!>
+    x := 3.14;  <!- Non-compatibilité de type (Int := Float) -!>
+    MaxValue := 200;  <!- Modification de la valeur d'une constante -!>
+    A[10] := 6;  <!- Dépassement de la taille du tableau -!>
+    y := x / 0;  <!- Division par zéro -!>
+    x[1] := 10;  <!- x n'est pas un tableau -!>
+    
+    <!- Erreurs dans les boucles et conditions -!>
+    for j from 1 to 5 step 1 {  <!- j non déclaré -!>
+        A[x] := j;
+    }
+    
+    do {
+        x := x + 1
+    } while (x < 10);  <!- Manque le ';' après x := x + 1 -!>
+    
+    if (x > 10) then {
+        y := 20;
+    } else  <!- Manque l'accolade ouvrante après else -!>
+        y := 30;
+    }
+    
+    <!- Erreurs dans les entrées/sorties -!>
+    input(nonDeclared);  <!- Variable non déclarée -!>
+    output(x, y;  <!- Parenthèse fermante manquante -!>
+    
+    <!- Erreurs d'expressions -!>
+    x := y ;  <!- Expression incomplète -!>
 }
 EndPg;

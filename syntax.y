@@ -322,10 +322,10 @@ affectation : IDF ASSIGN expression ';'
                 } else {
                        // Type compatibility check
                     int type_error = 0;
-                    if (strcmp(ts[i].TypeEntite, "Int") == 0) {
+                    if (strcmp(getNode(i)->TypeEntite, "Int") == 0) {
                         if ($3.is_var) {
                             int expr_idx = recherche($3.name);
-                            if (expr_idx != -1 && strcmp(ts[expr_idx].TypeEntite, "Float") == 0) {
+                            if (expr_idx != -1 && strcmp(getNode(expr_idx)->TypeEntite, "Float") == 0) {
                                 snprintf(buffer, sizeof(buffer), "Erreur: Impossible d'assigner un Float a un Int pour %s\n", $1);
                                 yyerrorSemantique(buffer);
                                 type_error = 1;
@@ -338,11 +338,11 @@ affectation : IDF ASSIGN expression ';'
                         if ($3.is_var) {
                             int expr_idx = recherche($3.name);
                             if (expr_idx != -1) {
-                                update($1, ts[i].TypeEntite, ts[i].isConst ? "true" : "false", ts[expr_idx].Value, 1);
+                                update($1, getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", getNode(expr_idx)->Value, 1);
                             }
                         } else {
                             snprintf(buffer, sizeof(buffer), "%d", $3.value);
-                            update($1, ts[i].TypeEntite, ts[i].isConst ? "true" : "false", buffer, 1);
+                            update($1, getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", buffer, 1);
                         }                
                     }
                 }
@@ -363,13 +363,13 @@ affectation : IDF ASSIGN expression ';'
                    snprintf(buffer, sizeof(buffer), "Erreur: La variable %s n'est pas declaree\n", $1);
                    yyerrorSemantique(buffer);
                    erreur = 1;
-               } else if (ts[i].Length == 1) {
+               } else if (getNode(i)->Length == 1) {
                    snprintf(buffer, sizeof(buffer), "Erreur: La variable %s n'est pas un tableau\n", $1);
                    yyerrorSemantique(buffer);
                    erreur = 1;
                } else {
                    int index = $3;
-                   if (index < 0 || index >= ts[i].Length) {
+                   if (index < 0 || index >= getNode(i)->Length) {
                        snprintf(buffer, sizeof(buffer), "Erreur: L'indice %d est hors limites pour le tableau %s\n", index, $1);
                        yyerrorSemantique(buffer);
                        erreur = 1;
@@ -382,12 +382,12 @@ affectation : IDF ASSIGN expression ';'
                      // Si c'est une variable, on récupère sa valeur de la table des symboles
                      int expr_idx = recherche($6.name);
                      if (expr_idx != -1) {
-                         update($1, ts[i].TypeEntite, ts[i].isConst ? "true" : "false", ts[expr_idx].Value, ts[i].Length);
+                         update($1, getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", getNode(expr_idx)->Value, getNode(i)->Length);
                      }
                  } else {
                      // Sinon c'est une valeur constante
                      snprintf(buffer, sizeof(buffer), "%d", $6.value);
-                     update($1, ts[i].TypeEntite, ts[i].isConst ? "true" : "false", buffer, ts[i].Length);
+                     update($1, getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", buffer, getNode(i)->Length);
                  }
                }
             }
@@ -395,6 +395,16 @@ affectation : IDF ASSIGN expression ';'
                 char buffer[100];
                 snprintf(buffer,sizeof(buffer),"Erreur: L'operateur '=' est une affectation, pas une comparaison\n");
                 yyerror(buffer);
+                yyerrok;
+            }
+            | IDF '[' IDF ']' ASSIGN expression ';'
+            {       
+                yyerror("Erreur: l'indice doit etre un nombre entier pas un identifiant");
+                yyerrok;
+            }
+            | IDF '[' CST_FLOAT ']' ASSIGN expression ';'
+            {       
+                yyerror("Erreur: l'indice doit etre un nombre entier pas un float");
                 yyerrok;
             }
             | IDF ASSIGN expression
@@ -631,8 +641,8 @@ expression : expression '+' expression
                 int divisor_idx = recherche($3.name);
                 if (divisor_idx != -1) {
                     // Vérifier si la valeur est "0" ou équivalent à 0
-                    if (strcmp(ts[divisor_idx].Value, "0") == 0 || 
-                        (strcmp(ts[divisor_idx].Value, "null") != 0 && atoi(ts[divisor_idx].Value) == 0)) {
+                    if (strcmp(getNode(divisor_idx)->Value, "0") == 0 || 
+                        (strcmp(getNode(divisor_idx)->Value, "null") != 0 && atoi(getNode(divisor_idx)->Value) == 0)) {
                         char buffer[100];
                         snprintf(buffer, sizeof(buffer), "Erreur: Division par zero detectee avec la variable %s", $3.name);
                         yyerrorSemantique(buffer);
@@ -692,8 +702,8 @@ expression : expression '+' expression
                 $$.name = strdup($1);
                 
                 // Try to convert value to int if available
-                if (strcmp(ts[i].Value, "null") != 0) {
-                    $$.value = atoi(ts[i].Value);
+                if (strcmp(getNode(i)->Value, "null") != 0) {
+                    $$.value = atoi(getNode(i)->Value);
                 } else {
                     $$.value = 0;  // Default value
                 }
@@ -712,7 +722,7 @@ expression : expression '+' expression
                 $$.is_var = 0;
                 $$.value = 0;
                 $$.name = NULL;
-            } else if (ts[i].Length == 1) {
+            } else if (getNode(i)->Length == 1) {
                 snprintf(buffer, sizeof(buffer), "Erreur: La variable %s n'est pas un tableau\n", $1);
                 yyerrorSemantique(buffer);
                 erreur = 1;
@@ -721,7 +731,7 @@ expression : expression '+' expression
                 $$.name = NULL;
             } else {
                 int index = $3;
-                if (index < 0 || index >= ts[i].Length) {
+                if (index < 0 || index >= getNode(i)->Length) {
                     snprintf(buffer, sizeof(buffer), "Erreur: L'indice %d est hors limites pour le tableau %s\n", index, $1);
                     yyerrorSemantique(buffer);
                     erreur = 1;
@@ -779,5 +789,6 @@ int main() {
     printf("\nAnalyse du programme...\n");
     yyparse();  
     afficher();
+    freeSymbolTable();
     return 0;
 }

@@ -5,6 +5,7 @@ Var
     let pi : Float;
     let A, B : [Int; 10];
     let F : [Float; 5];
+    let G : [Int; 5];
 
     @define Const MaxValue : Int = 100;
     @define Const PiValue : Float = 3.14;

@@ -177,8 +177,8 @@ COMMENTS_BLOCS "{--"([^-]|"-"[^-])*"--}"
   }
 }
 
-[ \t] { col+=yyleng; } /* Ignorer les espaces et tabulations */
-\n { nb_ligne++; col=1; } /* Nouvelle ligne */
+[ \t] { col+=yyleng; } 
+\n { nb_ligne++; col=1; } 
 
 . {
   printf("\nErreur lexicale sur l'entite %s a la ligne %d et la colonne %d\n", yytext, nb_ligne, col);
