@@ -535,14 +535,14 @@ static const yytype_uint16 yyrline[] =
 {
        0,    67,    67,    76,    84,    85,    86,    89,    90,    91,
       99,   119,   151,   156,   161,   166,   171,   179,   184,   187,
-     194,   221,   249,   254,   259,   264,   272,   275,   278,   286,
-     287,   288,   291,   292,   293,   294,   295,   296,   297,   304,
-     350,   356,   394,   400,   405,   410,   415,   420,   425,   430,
-     437,   439,   441,   446,   451,   457,   462,   467,   472,   479,
-     481,   486,   493,   510,   515,   522,   539,   544,   551,   555,
-     560,   565,   572,   573,   574,   581,   599,   613,   627,   668,
-     672,   673,   674,   675,   676,   677,   678,   679,   680,   686,
-     687,   712,   751,   757,   763
+     194,   220,   247,   252,   257,   262,   270,   273,   276,   284,
+     285,   286,   289,   290,   291,   292,   293,   294,   295,   302,
+     348,   354,   381,   387,   392,   397,   402,   407,   412,   417,
+     424,   426,   428,   433,   438,   444,   449,   454,   459,   466,
+     468,   473,   480,   497,   502,   509,   526,   531,   538,   542,
+     547,   552,   559,   560,   561,   568,   586,   600,   614,   655,
+     659,   660,   661,   662,   663,   664,   665,   666,   667,   673,
+     674,   699,   738,   744,   750
 };
 #endif
 
@@ -1728,7 +1728,7 @@ yyreduce:
                     yyerrok;
                 } else {
                     int inserted = inserer(token, "Idf", "null", "false");
-                    i = update(token, (yyvsp[(4) - (5)].str), "false", "null", 1);
+                    i = update(token, (yyvsp[(4) - (5)].str), "false", "null", 0);
                     printf("\nDeclaration de variables %s de type %s\n", token, (yyvsp[(4) - (5)].str));
                 }
                 token = strtok(NULL, ",");
@@ -1858,71 +1858,68 @@ yyreduce:
 
 /* Line 1455 of yacc.c  */
 #line 195 "syntax.y"
-    { 
-               char value_str[12], buffer[100];
+    {char buffer[100];
+            if(strcmp((yyvsp[(5) - (8)].str), "Float") == 0) {
+                snprintf(buffer, sizeof(buffer), "Type %s incompatible pour la constante entiere %s", (yyvsp[(5) - (8)].str), (yyvsp[(3) - (8)].str));
+                yyerrorSemantique(buffer);
+                yyerrok;
+            } else {
+                char value_str[12];
                 int inserted = inserer((yyvsp[(3) - (8)].str), "Idf", "null", "false");
                 if(inserted == -1) {
                     snprintf(buffer, sizeof(buffer), "Double declaration de l'entite %s", (yyvsp[(3) - (8)].str));
                     yyerrorSemantique(buffer);
                     yyerrok;
                 } else {
-                    // Vérification de la compatibilité de type
-                    if (strcmp((yyvsp[(5) - (8)].str), "Int") != 0 && strcmp((yyvsp[(5) - (8)].str), "Float") != 0) {
-                        snprintf(buffer, sizeof(buffer), "Type %s incompatible pour la constante %s", (yyvsp[(5) - (8)].str), (yyvsp[(3) - (8)].str));
-                        yyerrorSemantique(buffer);
+                    snprintf(value_str, sizeof(value_str), "%d", (yyvsp[(7) - (8)].entier));
+                    int i = update((yyvsp[(3) - (8)].str), (yyvsp[(5) - (8)].str), "true", value_str, 0);
+                    if(i == -1) {
+                        snprintf(buffer, sizeof(buffer), "Erreur dans la declaration de constante %s", (yyvsp[(3) - (8)].str));
+                        yyerror(buffer);
                         yyerrok;
                     } else {
-                        snprintf(value_str, sizeof(value_str), "%d", (yyvsp[(7) - (8)].entier));
-                        int i = update((yyvsp[(3) - (8)].str), (yyvsp[(5) - (8)].str), "true", value_str, 1);
-                        if(i == -1) {
-                            snprintf(buffer, sizeof(buffer), "Erreur dans la declaration de constante %s", (yyvsp[(3) - (8)].str));
-                            yyerror(buffer);
-                            yyerrok;
-                        } else {
-                            printf("\nDeclaration de constante entiere %s = %d\n", (yyvsp[(3) - (8)].str), (yyvsp[(7) - (8)].entier));
-                        }
+                        printf("\nDeclaration de constante entiere %s = %d\n", (yyvsp[(3) - (8)].str), (yyvsp[(7) - (8)].entier));
                     }
                 }
-            ;}
+            };}
     break;
 
   case 21:
 
 /* Line 1455 of yacc.c  */
-#line 222 "syntax.y"
+#line 221 "syntax.y"
     { 
-
-                char value_str[12], buffer[100];
-                int inserted = inserer((yyvsp[(3) - (8)].str), "Idf", "null", "false");
-                if(inserted == -1) {
-                    snprintf(buffer, sizeof(buffer), "Double declaration de l'entite %s", (yyvsp[(3) - (8)].str));
-                    yyerrorSemantique(buffer);
-                    yyerrok;
-                } else {
-                    // Vérification de la compatibilité de type
-                    if (strcmp((yyvsp[(5) - (8)].str), "Float") != 0) {
+                char buffer[100];
+                if (strcmp((yyvsp[(5) - (8)].str), "Int") == 0) {
                         snprintf(buffer, sizeof(buffer), "Type %s incompatible pour la constante flottante %s", (yyvsp[(5) - (8)].str), (yyvsp[(3) - (8)].str));
                         yyerrorSemantique(buffer);
                         yyerrok;
                     } else {
-                        snprintf(value_str, sizeof(value_str), "%f", (yyvsp[(7) - (8)].reel));
-                        int i = update((yyvsp[(3) - (8)].str), "Float", "true", value_str, 1);
-                        if(i == -1) {
-                            snprintf(buffer, sizeof(buffer), "Erreur dans la declaration de constante %s", (yyvsp[(3) - (8)].str));
-                            yyerror(buffer);
+                        char value_str[12], buffer[100];
+                        int inserted = inserer((yyvsp[(3) - (8)].str), "Idf", "null", "false");
+                        if (inserted == -1) {
+                            snprintf(buffer, sizeof(buffer), "Double declaration de l'entite %s", (yyvsp[(3) - (8)].str));
+                            yyerrorSemantique(buffer);
                             yyerrok;
                         } else {
-                            printf("\nDeclaration de constante flottante %s = %f\n", (yyvsp[(3) - (8)].str), (yyvsp[(7) - (8)].reel));
+                            snprintf(value_str, sizeof(value_str), "%f", (yyvsp[(7) - (8)].reel));
+                            int i = update((yyvsp[(3) - (8)].str), "Float", "true", value_str, 0);
+                            if (i == -1) {
+                                snprintf(buffer, sizeof(buffer), "Erreur dans la declaration de constante %s", (yyvsp[(3) - (8)].str));
+                                yyerror(buffer);
+                                yyerrok;
+                            } else {
+                                printf("\nDeclaration de constante flottante %s = %f\n", (yyvsp[(3) - (8)].str), (yyvsp[(7) - (8)].reel));
+                            }
                         }
                     }
-                }
             ;}
     break;
 
   case 22:
 
 /* Line 1455 of yacc.c  */
-#line 250 "syntax.y"
+#line 248 "syntax.y"
     { 
                yyerror("Erreur: Valeur de constante doit etre un iniger ou float");
                yyerrok;
@@ -1932,7 +1929,7 @@ yyreduce:
   case 23:
 
 /* Line 1455 of yacc.c  */
-#line 255 "syntax.y"
+#line 253 "syntax.y"
     { 
                yyerror("Erreur: constante sans type");
                yyerrok;
@@ -1942,7 +1939,7 @@ yyreduce:
   case 24:
 
 /* Line 1455 of yacc.c  */
-#line 260 "syntax.y"
+#line 258 "syntax.y"
     { 
                yyerror("Erreur: constante sans type");
                yyerrok;
@@ -1952,7 +1949,7 @@ yyreduce:
   case 25:
 
 /* Line 1455 of yacc.c  */
-#line 265 "syntax.y"
+#line 263 "syntax.y"
     {
                yyerror("Erreur dans la declaration de constante");
                yyerrok;
@@ -1962,7 +1959,7 @@ yyreduce:
   case 26:
 
 /* Line 1455 of yacc.c  */
-#line 272 "syntax.y"
+#line 270 "syntax.y"
     {
     (yyval.str) = strdup("Int");
     ;}
@@ -1971,7 +1968,7 @@ yyreduce:
   case 27:
 
 /* Line 1455 of yacc.c  */
-#line 275 "syntax.y"
+#line 273 "syntax.y"
     {
         (yyval.str) = strdup("Float");
     ;}
@@ -1980,7 +1977,7 @@ yyreduce:
   case 28:
 
 /* Line 1455 of yacc.c  */
-#line 278 "syntax.y"
+#line 276 "syntax.y"
     {
         yyerror("Type non reconnu");
         yyerrok;
@@ -1991,7 +1988,7 @@ yyreduce:
   case 38:
 
 /* Line 1455 of yacc.c  */
-#line 298 "syntax.y"
+#line 296 "syntax.y"
     {
                 yyerror("Erreur dans l'instruction");
                 yyerrok;
@@ -2001,7 +1998,7 @@ yyreduce:
   case 39:
 
 /* Line 1455 of yacc.c  */
-#line 305 "syntax.y"
+#line 303 "syntax.y"
     { 
                 char buffer[100];
                 int i = recherche((yyvsp[(1) - (4)].str));
@@ -2033,16 +2030,16 @@ yyreduce:
                         }
                     }
 
-                    if (!type_error) {
+                    if (type_error == 0) {
                         printf("\nAffectation pour entite %s \n", (yyvsp[(1) - (4)].str));
                         if ((yyvsp[(3) - (4)].expr_info).is_var) {
                             int expr_idx = recherche((yyvsp[(3) - (4)].expr_info).name);
                             if (expr_idx != -1) {
-                                update((yyvsp[(1) - (4)].str), getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", getNode(expr_idx)->Value, 1);
+                                update((yyvsp[(1) - (4)].str), getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", getNode(expr_idx)->Value, 0);
                             }
                         } else {
                             snprintf(buffer, sizeof(buffer), "%d", (yyvsp[(3) - (4)].expr_info).value);
-                            update((yyvsp[(1) - (4)].str), getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", buffer, 1);
+                            update((yyvsp[(1) - (4)].str), getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", buffer, 0);
                         }                
                     }
                 }
@@ -2052,7 +2049,7 @@ yyreduce:
   case 40:
 
 /* Line 1455 of yacc.c  */
-#line 350 "syntax.y"
+#line 348 "syntax.y"
     {
                   char buffer[100];
                   snprintf(buffer,sizeof(buffer),"Erreur: L'operateur '=' est une affectation, pas une comparaison\n");
@@ -2064,7 +2061,7 @@ yyreduce:
   case 41:
 
 /* Line 1455 of yacc.c  */
-#line 357 "syntax.y"
+#line 355 "syntax.y"
     { 
                char buffer[100];
                int i = recherche((yyvsp[(1) - (7)].str));
@@ -2088,18 +2085,7 @@ yyreduce:
                }
 
                if (!erreur) {
-                printf("\nAffectation pour tableau %s[%d] \n", (yyvsp[(1) - (7)].str), (yyvsp[(3) - (7)].entier));
-                if ((yyvsp[(6) - (7)].expr_info).is_var) {
-                     // Si c'est une variable, on récupère sa valeur de la table des symboles
-                     int expr_idx = recherche((yyvsp[(6) - (7)].expr_info).name);
-                     if (expr_idx != -1) {
-                         update((yyvsp[(1) - (7)].str), getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", getNode(expr_idx)->Value, getNode(i)->Length);
-                     }
-                 } else {
-                     // Sinon c'est une valeur constante
-                     snprintf(buffer, sizeof(buffer), "%d", (yyvsp[(6) - (7)].expr_info).value);
-                     update((yyvsp[(1) - (7)].str), getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", buffer, getNode(i)->Length);
-                 }
+                printf("\nAffectation pour tableau %s[%d] \n", (yyvsp[(1) - (7)].str), (yyvsp[(3) - (7)].entier)); 
                }
             ;}
     break;
@@ -2107,7 +2093,7 @@ yyreduce:
   case 42:
 
 /* Line 1455 of yacc.c  */
-#line 394 "syntax.y"
+#line 381 "syntax.y"
     {
                 char buffer[100];
                 snprintf(buffer,sizeof(buffer),"Erreur: L'operateur '=' est une affectation, pas une comparaison\n");
@@ -2119,7 +2105,7 @@ yyreduce:
   case 43:
 
 /* Line 1455 of yacc.c  */
-#line 401 "syntax.y"
+#line 388 "syntax.y"
     {       
                 yyerror("Erreur: l'indice doit etre un nombre entier pas un identifiant");
                 yyerrok;
@@ -2129,7 +2115,7 @@ yyreduce:
   case 44:
 
 /* Line 1455 of yacc.c  */
-#line 406 "syntax.y"
+#line 393 "syntax.y"
     {       
                 yyerror("Erreur: l'indice doit etre un nombre entier pas un float");
                 yyerrok;
@@ -2139,7 +2125,7 @@ yyreduce:
   case 45:
 
 /* Line 1455 of yacc.c  */
-#line 411 "syntax.y"
+#line 398 "syntax.y"
     { 
                 yyerror("Erreur: Point-virgule manquant apres l'affectation");
                 yyerrok;
@@ -2149,7 +2135,7 @@ yyreduce:
   case 46:
 
 /* Line 1455 of yacc.c  */
-#line 416 "syntax.y"
+#line 403 "syntax.y"
     {
                 yyerror("Erreur: Point-virgule manquant apres l'affectation de tableau");
                 yyerrok;
@@ -2159,7 +2145,7 @@ yyreduce:
   case 47:
 
 /* Line 1455 of yacc.c  */
-#line 421 "syntax.y"
+#line 408 "syntax.y"
     {
                 yyerror("Erreur: Identificateur invalide dans l'affectation");
                 yyerrok;
@@ -2169,7 +2155,7 @@ yyreduce:
   case 48:
 
 /* Line 1455 of yacc.c  */
-#line 426 "syntax.y"
+#line 413 "syntax.y"
     {
                 yyerror("Erreur: vous affectez une valeur invalide");
                 yyerrok;
@@ -2179,7 +2165,7 @@ yyreduce:
   case 49:
 
 /* Line 1455 of yacc.c  */
-#line 431 "syntax.y"
+#line 418 "syntax.y"
     {
                 yyerror("Erreur: vous affectez une valeur invalide au tableau");
                 yyerrok;
@@ -2189,21 +2175,21 @@ yyreduce:
   case 50:
 
 /* Line 1455 of yacc.c  */
-#line 438 "syntax.y"
+#line 425 "syntax.y"
     { printf("\nCondition if sans else\n"); ;}
     break;
 
   case 51:
 
 /* Line 1455 of yacc.c  */
-#line 440 "syntax.y"
+#line 427 "syntax.y"
     { printf("\nCondition if-else\n"); ;}
     break;
 
   case 52:
 
 /* Line 1455 of yacc.c  */
-#line 442 "syntax.y"
+#line 429 "syntax.y"
     {
               yyerror("Erreur dans la condition du if");
               yyerrok;
@@ -2213,7 +2199,7 @@ yyreduce:
   case 53:
 
 /* Line 1455 of yacc.c  */
-#line 447 "syntax.y"
+#line 434 "syntax.y"
     {
             yyerror("Erreur: syntaxe du else incorrect");
              yyerrok;
@@ -2223,7 +2209,7 @@ yyreduce:
   case 54:
 
 /* Line 1455 of yacc.c  */
-#line 452 "syntax.y"
+#line 439 "syntax.y"
     {
             yyerror("Erreur: syntaxe du else incorrect");
              yyerrok;
@@ -2233,7 +2219,7 @@ yyreduce:
   case 55:
 
 /* Line 1455 of yacc.c  */
-#line 458 "syntax.y"
+#line 445 "syntax.y"
     {
               yyerror("Erreur: parenthese du exprssion manquant");
               yyerrok;
@@ -2243,7 +2229,7 @@ yyreduce:
   case 56:
 
 /* Line 1455 of yacc.c  */
-#line 463 "syntax.y"
+#line 450 "syntax.y"
     {
             yyerror("Erreur:erreur dans le else ");
              yyerrok;
@@ -2253,7 +2239,7 @@ yyreduce:
   case 57:
 
 /* Line 1455 of yacc.c  */
-#line 468 "syntax.y"
+#line 455 "syntax.y"
     {
             yyerror("Erreur:erreur dans le else ");
              yyerrok;
@@ -2263,7 +2249,7 @@ yyreduce:
   case 58:
 
 /* Line 1455 of yacc.c  */
-#line 473 "syntax.y"
+#line 460 "syntax.y"
     {
               yyerror("Erreur: Syntaxe incorrecte pour la condition if -error");
               yyerrok;
@@ -2273,14 +2259,14 @@ yyreduce:
   case 59:
 
 /* Line 1455 of yacc.c  */
-#line 480 "syntax.y"
+#line 467 "syntax.y"
     { printf("\nBoucle do-while\n"); ;}
     break;
 
   case 60:
 
 /* Line 1455 of yacc.c  */
-#line 482 "syntax.y"
+#line 469 "syntax.y"
     {
               yyerror("Erreur: Parentheses manquantes autour de la condition while");
               yyerrok;
@@ -2290,7 +2276,7 @@ yyreduce:
   case 61:
 
 /* Line 1455 of yacc.c  */
-#line 487 "syntax.y"
+#line 474 "syntax.y"
     {
               yyerror("Erreur: Syntaxe incorrecte pour la boucle do-while");
               yyerrok;
@@ -2300,7 +2286,7 @@ yyreduce:
   case 62:
 
 /* Line 1455 of yacc.c  */
-#line 494 "syntax.y"
+#line 481 "syntax.y"
     { 
                 char buffer[100];
                 int i = recherche((yyvsp[(2) - (11)].str));
@@ -2322,7 +2308,7 @@ yyreduce:
   case 63:
 
 /* Line 1455 of yacc.c  */
-#line 511 "syntax.y"
+#line 498 "syntax.y"
     {
                 yyerror("Erreur: Syntaxe incorrecte pour la boucle for");
                 yyerrok;    
@@ -2332,7 +2318,7 @@ yyreduce:
   case 64:
 
 /* Line 1455 of yacc.c  */
-#line 516 "syntax.y"
+#line 503 "syntax.y"
     {
                yyerror("Erreur: Syntaxe incorrecte pour la boucle for");
                yyerrok;
@@ -2342,7 +2328,7 @@ yyreduce:
   case 65:
 
 /* Line 1455 of yacc.c  */
-#line 523 "syntax.y"
+#line 510 "syntax.y"
     { 
                 char buffer[100];
                 int i = recherche((yyvsp[(3) - (5)].str));
@@ -2364,7 +2350,7 @@ yyreduce:
   case 66:
 
 /* Line 1455 of yacc.c  */
-#line 540 "syntax.y"
+#line 527 "syntax.y"
     {
             yyerror("Erreur: expression invalide dans l'instruction input");
             yyerrok;
@@ -2374,7 +2360,7 @@ yyreduce:
   case 67:
 
 /* Line 1455 of yacc.c  */
-#line 545 "syntax.y"
+#line 532 "syntax.y"
     {
             yyerror("Erreur: Syntaxe incorrecte pour l'instruction input");
             yyerrok;
@@ -2384,7 +2370,7 @@ yyreduce:
   case 68:
 
 /* Line 1455 of yacc.c  */
-#line 552 "syntax.y"
+#line 539 "syntax.y"
     { 
                 printf("\nInstruction output appele \n");
          ;}
@@ -2393,7 +2379,7 @@ yyreduce:
   case 69:
 
 /* Line 1455 of yacc.c  */
-#line 556 "syntax.y"
+#line 543 "syntax.y"
     {
             yyerror("Erreur: parenthese fermant manquant pour le output");
              yyerrok;
@@ -2403,7 +2389,7 @@ yyreduce:
   case 70:
 
 /* Line 1455 of yacc.c  */
-#line 561 "syntax.y"
+#line 548 "syntax.y"
     {
             yyerror("Erreur: parenthese ouvrant manquant pour le output");
              yyerrok;
@@ -2413,7 +2399,7 @@ yyreduce:
   case 71:
 
 /* Line 1455 of yacc.c  */
-#line 566 "syntax.y"
+#line 553 "syntax.y"
     {
              yyerror("Erreur: Syntaxe incorrecte pour l'instruction output");
              yyerrok;
@@ -2423,7 +2409,7 @@ yyreduce:
   case 74:
 
 /* Line 1455 of yacc.c  */
-#line 575 "syntax.y"
+#line 562 "syntax.y"
     {
                      yyerror("Erreur dans la liste d'expressions");
                      yyerrok;
@@ -2433,7 +2419,7 @@ yyreduce:
   case 75:
 
 /* Line 1455 of yacc.c  */
-#line 582 "syntax.y"
+#line 569 "syntax.y"
     {
             // Pour les opérations simples, on calcule la valeur si on a des constantes
             if (!(yyvsp[(1) - (3)].expr_info).is_var && !(yyvsp[(3) - (3)].expr_info).is_var) {
@@ -2443,7 +2429,7 @@ yyreduce:
 
                 char buffer[20];
                 snprintf(buffer, sizeof(buffer), "%d", (yyval.expr_info).value);
-                update("expr", "Int", "false", buffer, 1);
+                update("expr", "Int", "false", buffer, 0);
             } else {
                 // Sinon, on doit garder l'info que c'est une expression avec variables
                 (yyval.expr_info).is_var = 1;
@@ -2456,7 +2442,7 @@ yyreduce:
   case 76:
 
 /* Line 1455 of yacc.c  */
-#line 600 "syntax.y"
+#line 587 "syntax.y"
     {
             // Pour les opérations simples, on calcule la valeur si on a des constantes
             if (!(yyvsp[(1) - (3)].expr_info).is_var && !(yyvsp[(3) - (3)].expr_info).is_var) {
@@ -2475,7 +2461,7 @@ yyreduce:
   case 77:
 
 /* Line 1455 of yacc.c  */
-#line 614 "syntax.y"
+#line 601 "syntax.y"
     {
             // Pour les opérations simples, on calcule la valeur si on a des constantes
             if (!(yyvsp[(1) - (3)].expr_info).is_var && !(yyvsp[(3) - (3)].expr_info).is_var) {
@@ -2494,7 +2480,7 @@ yyreduce:
   case 78:
 
 /* Line 1455 of yacc.c  */
-#line 628 "syntax.y"
+#line 615 "syntax.y"
     {
             // Vérifier division par zéro pour les constantes
             if (!(yyvsp[(3) - (3)].expr_info).is_var && (yyvsp[(3) - (3)].expr_info).value == 0) {
@@ -2540,7 +2526,7 @@ yyreduce:
   case 79:
 
 /* Line 1455 of yacc.c  */
-#line 669 "syntax.y"
+#line 656 "syntax.y"
     {
             (yyval.expr_info) = (yyvsp[(2) - (3)].expr_info);
         ;}
@@ -2549,7 +2535,7 @@ yyreduce:
   case 88:
 
 /* Line 1455 of yacc.c  */
-#line 680 "syntax.y"
+#line 667 "syntax.y"
     {
         char buffer[100];
         snprintf(buffer,sizeof(buffer),"Erreur: L'operateur '=' est une affectation, pas une comparaison\n");
@@ -2561,7 +2547,7 @@ yyreduce:
   case 90:
 
 /* Line 1455 of yacc.c  */
-#line 687 "syntax.y"
+#line 674 "syntax.y"
     {
             char buffer[100];
             int i = recherche((yyvsp[(1) - (1)].str));
@@ -2592,7 +2578,7 @@ yyreduce:
   case 91:
 
 /* Line 1455 of yacc.c  */
-#line 713 "syntax.y"
+#line 700 "syntax.y"
     {
             char buffer[100];
             int i = recherche((yyvsp[(1) - (4)].str));
@@ -2636,7 +2622,7 @@ yyreduce:
   case 92:
 
 /* Line 1455 of yacc.c  */
-#line 752 "syntax.y"
+#line 739 "syntax.y"
     {
             (yyval.expr_info).value = (yyvsp[(1) - (1)].entier);
             (yyval.expr_info).is_var = 0;
@@ -2647,7 +2633,7 @@ yyreduce:
   case 93:
 
 /* Line 1455 of yacc.c  */
-#line 758 "syntax.y"
+#line 745 "syntax.y"
     {
             (yyval.expr_info).value = (int)(yyvsp[(1) - (1)].reel); 
             (yyval.expr_info).is_var = 0;
@@ -2658,7 +2644,7 @@ yyreduce:
   case 94:
 
 /* Line 1455 of yacc.c  */
-#line 764 "syntax.y"
+#line 751 "syntax.y"
     {
         yyerror("Erreur dans l'expression");
         yyerrok;
@@ -2671,7 +2657,7 @@ yyreduce:
 
 
 /* Line 1455 of yacc.c  */
-#line 2675 "syntax.tab.c"
+#line 2661 "syntax.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2883,7 +2869,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 773 "syntax.y"
+#line 760 "syntax.y"
 
 
 int yyerror(const char *s) {

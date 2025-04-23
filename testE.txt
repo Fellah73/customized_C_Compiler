@@ -1,20 +1,13 @@
 MainPrgm L3_soft_test ;
 
-Var
-    <!- Erreurs lexicales -!>
-    let invalid__id : Int;   <!- Double underscore -!>
-    let too_long_identifier_name_error : Int;  <!- Plus de 14 caractères -!>
-    let id_ : Int;  <!- Se termine par un underscore -!>
-    let @invalid : Int;  <!- Caractère non autorisé -!>
-    let 123abc : Int;  <!- Commence par un chiffre -!>
-    @define Const InvalidInt : Int = 40000;  <!- Entier hors limites [0,32767] -!>
-    @define Const InvalidSignedInt : Int = (-40000);  <!- Entier signé hors limites [-32768,32767] -!>
-    
-    <!- Erreurs syntaxiques -!>
-    let x, y Int;  <!- Manque le ':' -!>
-    let a, b : [Int ; 5];  <!- Manque le ';' dans la déclaration du tableau -!>
-    @define Const MissingType = 100;  <!- Type manquant -!>
-    let c : Int;  <!- Liste de variables incorrecte -!>
+Var    
+
+    @define Const InvalidFloat : Float = 5;  <!- type incorrect de float = int -!>
+    @define Const InvalidInt : Int = (+15.02);  <!- type incorrect de int = float -!>
+    let IntigerIdf, y : Int;  
+    let arrrayA, arrrayB : [Int ; 5];  
+    let arrrayC : [Int; (-5)];
+    let floatIdf : Float;  
     
     <!- Erreurs sémantiques -!>
     let x, y, x : Int;  <!- Double déclaration de x -!>
@@ -24,14 +17,17 @@ Var
     let B : [Float; 3];
 
 BeginPg
-{
+{  
+    IntigerIdf := floatIdf;
+    
+   
     <!- Erreurs lexicales dans les instructions -!>
     x := 12345678901;  <!- Nombre trop grand -!>
-    y := 3.14;  <!- Utilisation de virgule au lieu de point -!>
+    y := 3.14;  
     
     <!- Erreurs syntaxiques dans les instructions -!>
-    x := 5  <!- Manque le ';' -!>
-    x = 10;  <!- Utilisation de '=' au lieu de ':=' -!>
+    x := 5;  
+    x := 10; 
     if x > 5 then {  <!- Manque les parenthèses autour de la condition -!>
         y := 10;
     }
@@ -41,30 +37,29 @@ BeginPg
     C[0] := 5;  <!- Tableau non déclaré -!>
     x := 3.14;  <!- Non-compatibilité de type (Int := Float) -!>
     MaxValue := 200;  <!- Modification de la valeur d'une constante -!>
-    A[10] := 6;  <!- Dépassement de la taille du tableau -!>
+    arrrayA[10] := 6;  <!- Dépassement de la taille du tableau -!>
     y := x / 0;  <!- Division par zéro -!>
     x[1] := 10;  <!- x n'est pas un tableau -!>
     
     <!- Erreurs dans les boucles et conditions -!>
     for j from 1 to 5 step 1 {  <!- j non déclaré -!>
-        A[x] := j;
+        arrrayB[x] := j;
     }
     
     do {
-        x := x + 1
-    } while (x < 10);  <!- Manque le ';' après x := x + 1 -!>
+        x := x + 1;
+    } while (x < 10); 
     
     if (x > 10) then {
         y := 20;
-    } else  <!- Manque l'accolade ouvrante après else -!>
+    } else   <!- Manque l'accolade ouvrante après else -!>
         y := 30;
     }
     
     <!- Erreurs dans les entrées/sorties -!>
     input(nonDeclared);  <!- Variable non déclarée -!>
-    output(x, y;  <!- Parenthèse fermante manquante -!>
-    
-    <!- Erreurs d'expressions -!>
-    x := y ;  <!- Expression incomplète -!>
+     
+     
+     
 }
 EndPg;

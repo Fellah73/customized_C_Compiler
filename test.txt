@@ -22,7 +22,8 @@ BeginPg
     pi := (3.0 + 5.2) / 2;
 
     <!- Affectation dans des tableaux -!>
-    A[0] := x;
+    A[0] := 7;
+    A[1] := 2;
     B[1] := (z - y + (-3)) * 2;
     F[2] := (pi + 1.5) / 2;
 

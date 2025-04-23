@@ -6,11 +6,15 @@
   #include <ctype.h>  
   #include "syntax.tab.h"
   
-  
+  typedef struct {
+    bool isValid;
+    int value;
+  } IntResult;
+ 
   int nb_ligne=1;
   int col=1;
   
-  int integer_validation(char number[]) {
+  IntResult integer_validation(char number[]) {
     int length = strlen(number);
     char clean_number[20];
     int index = 0;
@@ -31,10 +35,15 @@
 
     int value = atoi(clean_number);
 
+    IntResult result;
+    result.isValid = true;
+    result.value = value;
+
     if (value < -32768 || value > 32767) {
-      return 33000;
+      result.isValid = false;
+      result.value = 0;
     }
-    return value;
+    return result;
   }
 
   float float_validation(char number[]) {
@@ -158,9 +167,9 @@ COMMENTS_BLOCS "{--"([^-]|"-"[^-])*"--}"
 {CST_INT} {
   int value = atoi(yytext);
 
-  if (integer_validation(yytext) != 33000) {
+  if (integer_validation(yytext).isValid) {
     col+=yyleng;
-    yylval.entier = integer_validation(yytext);
+    yylval.entier = integer_validation(yytext).value;
     return CST_INT;
   } else {
     printf("\nErreur lexicale: Entier hors plage [-32768, 32767] a la ligne %d et la colonne %d\n", nb_ligne, col);

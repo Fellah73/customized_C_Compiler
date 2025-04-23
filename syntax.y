@@ -110,7 +110,7 @@ var_decl : LET var_list ':' type ';'
                     yyerrok;
                 } else {
                     int inserted = inserer(token, "Idf", "null", "false");
-                    i = update(token, $4, "false", "null", 1);
+                    i = update(token, $4, "false", "null", 0);
                     printf("\nDeclaration de variables %s de type %s\n", token, $4);
                 }
                 token = strtok(NULL, ",");
@@ -192,59 +192,57 @@ var_list : IDF ',' var_list {
 
 /* Declaration de constantes */
 const_decl : DEFINE CONST IDF ':' type '=' CST_INT ';'
-           { 
-               char value_str[12], buffer[100];
+           {char buffer[100];
+            if(strcmp($5, "Float") == 0) {
+                snprintf(buffer, sizeof(buffer), "Type %s incompatible pour la constante entiere %s", $5, $3);
+                yyerrorSemantique(buffer);
+                yyerrok;
+            } else {
+                char value_str[12];
                 int inserted = inserer($3, "Idf", "null", "false");
                 if(inserted == -1) {
                     snprintf(buffer, sizeof(buffer), "Double declaration de l'entite %s", $3);
                     yyerrorSemantique(buffer);
                     yyerrok;
                 } else {
-                    // Vérification de la compatibilité de type
-                    if (strcmp($5, "Int") != 0 && strcmp($5, "Float") != 0) {
-                        snprintf(buffer, sizeof(buffer), "Type %s incompatible pour la constante %s", $5, $3);
-                        yyerrorSemantique(buffer);
+                    snprintf(value_str, sizeof(value_str), "%d", $7);
+                    int i = update($3, $5, "true", value_str, 0);
+                    if(i == -1) {
+                        snprintf(buffer, sizeof(buffer), "Erreur dans la declaration de constante %s", $3);
+                        yyerror(buffer);
                         yyerrok;
                     } else {
-                        snprintf(value_str, sizeof(value_str), "%d", $7);
-                        int i = update($3, $5, "true", value_str, 1);
-                        if(i == -1) {
-                            snprintf(buffer, sizeof(buffer), "Erreur dans la declaration de constante %s", $3);
-                            yyerror(buffer);
-                            yyerrok;
-                        } else {
-                            printf("\nDeclaration de constante entiere %s = %d\n", $3, $7);
-                        }
+                        printf("\nDeclaration de constante entiere %s = %d\n", $3, $7);
                     }
                 }
-            }
+            }}
+
            | DEFINE CONST IDF ':' type '=' CST_FLOAT ';'
            { 
-
-                char value_str[12], buffer[100];
-                int inserted = inserer($3, "Idf", "null", "false");
-                if(inserted == -1) {
-                    snprintf(buffer, sizeof(buffer), "Double declaration de l'entite %s", $3);
-                    yyerrorSemantique(buffer);
-                    yyerrok;
-                } else {
-                    // Vérification de la compatibilité de type
-                    if (strcmp($5, "Float") != 0) {
+                char buffer[100];
+                if (strcmp($5, "Int") == 0) {
                         snprintf(buffer, sizeof(buffer), "Type %s incompatible pour la constante flottante %s", $5, $3);
                         yyerrorSemantique(buffer);
                         yyerrok;
                     } else {
-                        snprintf(value_str, sizeof(value_str), "%f", $7);
-                        int i = update($3, "Float", "true", value_str, 1);
-                        if(i == -1) {
-                            snprintf(buffer, sizeof(buffer), "Erreur dans la declaration de constante %s", $3);
-                            yyerror(buffer);
+                        char value_str[12], buffer[100];
+                        int inserted = inserer($3, "Idf", "null", "false");
+                        if (inserted == -1) {
+                            snprintf(buffer, sizeof(buffer), "Double declaration de l'entite %s", $3);
+                            yyerrorSemantique(buffer);
                             yyerrok;
                         } else {
-                            printf("\nDeclaration de constante flottante %s = %f\n", $3, $7);
+                            snprintf(value_str, sizeof(value_str), "%f", $7);
+                            int i = update($3, "Float", "true", value_str, 0);
+                            if (i == -1) {
+                                snprintf(buffer, sizeof(buffer), "Erreur dans la declaration de constante %s", $3);
+                                yyerror(buffer);
+                                yyerrok;
+                            } else {
+                                printf("\nDeclaration de constante flottante %s = %f\n", $3, $7);
+                            }
                         }
                     }
-                }
             }
            |DEFINE CONST IDF ':' type '=' error ';'
            { 
@@ -333,16 +331,16 @@ affectation : IDF ASSIGN expression ';'
                         }
                     }
 
-                    if (!type_error) {
+                    if (type_error == 0) {
                         printf("\nAffectation pour entite %s \n", $1);
                         if ($3.is_var) {
                             int expr_idx = recherche($3.name);
                             if (expr_idx != -1) {
-                                update($1, getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", getNode(expr_idx)->Value, 1);
+                                update($1, getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", getNode(expr_idx)->Value, 0);
                             }
                         } else {
                             snprintf(buffer, sizeof(buffer), "%d", $3.value);
-                            update($1, getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", buffer, 1);
+                            update($1, getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", buffer, 0);
                         }                
                     }
                 }
@@ -377,18 +375,7 @@ affectation : IDF ASSIGN expression ';'
                }
 
                if (!erreur) {
-                printf("\nAffectation pour tableau %s[%d] \n", $1, $3);
-                if ($6.is_var) {
-                     // Si c'est une variable, on récupère sa valeur de la table des symboles
-                     int expr_idx = recherche($6.name);
-                     if (expr_idx != -1) {
-                         update($1, getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", getNode(expr_idx)->Value, getNode(i)->Length);
-                     }
-                 } else {
-                     // Sinon c'est une valeur constante
-                     snprintf(buffer, sizeof(buffer), "%d", $6.value);
-                     update($1, getNode(i)->TypeEntite, getNode(i)->isConst ? "true" : "false", buffer, getNode(i)->Length);
-                 }
+                printf("\nAffectation pour tableau %s[%d] \n", $1, $3); 
                }
             }
             | IDF '[' CST_INT ']' '=' expression ';' {
@@ -588,7 +575,7 @@ expression : expression '+' expression
 
                 char buffer[20];
                 snprintf(buffer, sizeof(buffer), "%d", $$.value);
-                update("expr", "Int", "false", buffer, 1);
+                update("expr", "Int", "false", buffer, 0);
             } else {
                 // Sinon, on doit garder l'info que c'est une expression avec variables
                 $$.is_var = 1;
