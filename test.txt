@@ -66,7 +66,20 @@ BeginPg
 
     <!- Boucle for -!>
     for x from 0 to 5 step 1 {
-        A[0] := x * 2;
+        
+        do {
+        x := x + 1;
+           } while (x < 10);
+
+    if (!(x == y) OR (z >= x)) then
+    {
+        x := x + 1;
+    }
+    else
+    {
+        x := x - 1;
+    }
+
     }
 
 }

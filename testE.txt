@@ -33,11 +33,11 @@ BeginPg
     }
     
     <!- Erreurs sémantiques -!>
-    z := 10;  <!- Variable non déclarée -!>
+    z := aa+bbbb;  <!- Variable non déclarée -!>
     C[0] := 5;  <!- Tableau non déclaré -!>
     x := 3.14;  <!- Non-compatibilité de type (Int := Float) -!>
     MaxValue := 200;  <!- Modification de la valeur d'une constante -!>
-    arrrayA[10] := 6;  <!- Dépassement de la taille du tableau -!>
+    arrrayA[(-5)] := 6;  <!- Dépassement de la taille du tableau -!>
     y := x / 0;  <!- Division par zéro -!>
     x[1] := 10;  <!- x n'est pas un tableau -!>
     
