@@ -96,40 +96,36 @@ int inserer(char entite[], char code[], char type[], char isConst[])
     return -1;
 }
 
+
 int update(char entite[], char type[], char isConst[], char value[], int length)
 {
     int index = recherche(entite);
 
-    if (length <= 0)
-    {
-        TypeTS *node = getNode(index);
-        if (node != NULL)
-        {
+    if (index == -1) {
+        return -1;  // entité inexistante
+    }
+    
+    TypeTS *node = getNode(index);
+    if (node != NULL) {
+        if (node->isConst && strcmp(node->Value, "null") != 0 && strcmp(value, "null") != 0) {
+            return -3;  // code erreur pour modification d'une constante
+        }
+        
+        if (length <= 0) {
             node->Length = 0;
+            if (length < 0) {
+                return -2;
+            }
         }
-        return -2;
-    }
 
-    if (index == -1)
-    {
-        return -1;
-    }
-
-    if (value[0] == '(')
-    {
-        printf("la valeur ne doit pas etre signe\n");
-    }
-
-    if (index != -1)
-    {
-        TypeTS *node = getNode(index);
-        if (node != NULL)
-        {
-            strcpy(node->TypeEntite, type);
-            strcpy(node->Value, value);
-            node->isConst = (strcmp(isConst, "true") == 0);
-            node->Length = length;
+        if (value[0] == '(') {
+            printf("la valeur ne doit pas etre signe\n");
         }
+
+        strcpy(node->TypeEntite, type);
+        strcpy(node->Value, value);
+        node->isConst = (strcmp(isConst, "true") == 0);
+        node->Length = length;
     }
     return index + 1;
 }

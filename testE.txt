@@ -59,7 +59,6 @@ BeginPg
     <!- Erreurs dans les entrées/sorties -!>
     input(nonDeclared);  <!- Variable non déclarée -!>
      
-     
-     
+         
 }
 EndPg;

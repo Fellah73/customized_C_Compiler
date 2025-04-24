@@ -303,6 +303,7 @@ affectation : IDF ASSIGN expression ';'
             { 
                 char buffer[100];
                 int i = recherche($1);
+                int type_error = 0;
 
                 // undeclared variable
                 if(i == -1) {
@@ -316,20 +317,29 @@ affectation : IDF ASSIGN expression ';'
                         snprintf(buffer,sizeof(buffer),"Erreur: La constante %s ne peut pas etre modifiee\n", $1);
                         yyerrorSemantique(buffer);
                         yyerrok;
+                        type_error = 1;
                         // no problem
                 } else {
                        // Type compatibility check
-                    int type_error = 0;
-                    if (strcmp(getNode(i)->TypeEntite, "Int") == 0) {
-                        if ($3.is_var) {
-                            int expr_idx = recherche($3.name);
-                            if (expr_idx != -1 && strcmp(getNode(expr_idx)->TypeEntite, "Float") == 0) {
+                       
+                       TypeTS* node = getNode(i);
+                        if (strcmp(node->TypeEntite, "Int") == 0) {
+                            if ($3.is_var) {
+                                int expr_idx = recherche($3.name);
+                                if (expr_idx != -1) {
+                                    TypeTS* expr_node = getNode(expr_idx);
+                                    if (strcmp(expr_node->TypeEntite, "Float") == 0) {
+                                        snprintf(buffer, sizeof(buffer), "Erreur: Impossible d'assigner un Float a un Int pour %s\n", $1);
+                                        yyerrorSemantique(buffer);
+                                        type_error = 1;
+                                    }
+                                }
+                            } else if ($3.type != NULL && strcmp($3.type, "Float") == 0) {
                                 snprintf(buffer, sizeof(buffer), "Erreur: Impossible d'assigner un Float a un Int pour %s\n", $1);
                                 yyerrorSemantique(buffer);
                                 type_error = 1;
                             }
                         }
-                    }
 
                     if (type_error == 0) {
                         printf("\nAffectation pour entite %s \n", $1);
@@ -361,7 +371,7 @@ affectation : IDF ASSIGN expression ';'
                    snprintf(buffer, sizeof(buffer), "Erreur: La variable %s n'est pas declaree\n", $1);
                    yyerrorSemantique(buffer);
                    erreur = 1;
-               } else if (getNode(i)->Length == 1) {
+               } else if (getNode(i)->Length <= 0) {
                    snprintf(buffer, sizeof(buffer), "Erreur: La variable %s n'est pas un tableau\n", $1);
                    yyerrorSemantique(buffer);
                    erreur = 1;
@@ -709,7 +719,7 @@ expression : expression '+' expression
                 $$.is_var = 0;
                 $$.value = 0;
                 $$.name = NULL;
-            } else if (getNode(i)->Length == 1) {
+            } else if (getNode(i)->Length <= 0) {
                 snprintf(buffer, sizeof(buffer), "Erreur: La variable %s n'est pas un tableau\n", $1);
                 yyerrorSemantique(buffer);
                 erreur = 1;
@@ -740,12 +750,14 @@ expression : expression '+' expression
             $$.value = $1;
             $$.is_var = 0;
             $$.name = NULL;
+            $$.type = strdup("Int");
         }
         | CST_FLOAT
         {
             $$.value = (int)$1; 
             $$.is_var = 0;
             $$.name = NULL;
+            $$.type = strdup("Float");
         }
         | error 
         {
